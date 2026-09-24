@@ -1,0 +1,247 @@
+:root {
+  /* 본문 및 제목 글자 대조도 강화 (가독성 개선) */
+  --text: #1f2937 !important; /* 선명한 짙은 진회색 (본문용) */
+  --text-h: #0f172a !important; /* 선명한 블랙 (제목용) */
+  --bg: #ffffff;
+  --border: #e5e7eb;
+  --code-bg: #f3f4f6;
+  --accent: #8b5cf6;
+  --accent-bg: rgba(139, 92, 246, 0.1);
+  --accent-border: rgba(139, 92, 246, 0.5);
+  --social-bg: rgba(243, 244, 246, 0.5);
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  --sans:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --heading:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 18px/160% var(--sans);
+  letter-spacing: -0.1px;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #e5e7eb !important; /* 다크모드 시 선명한 밝은 회색 */
+    --text-h: #ffffff !important; /* 다크모드 시 선명한 화이트 */
+    --bg: #111827;
+    --border: #374151;
+    --code-bg: #1f2937;
+    --accent: #c084fc;
+    --accent-bg: rgba(192, 132, 252, 0.15);
+    --accent-border: rgba(192, 132, 252, 0.5);
+    --social-bg: rgba(31, 41, 55, 0.5);
+    --shadow:
+      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  }
+
+  #social .button-icon {
+    filter: invert(1) brightness(2);
+  }
+}
+
+body {
+  margin: 0;
+  color: var(--text) !important;
+  background-color: var(--bg);
+  opacity: 1 !important; /* 불투명도 100% 강제 적용 */
+}
+
+#root {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  text-align: left;
+  border-inline: none;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+/* -------------------------------------
+   제목 요소(H1~H4) 및 마크다운 렌더링 최적화 
+   (희미한 글씨 현상 완벽 제거)
+------------------------------------- */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--heading);
+  font-weight: 700 !important;
+  color: var(--text-h) !important;
+  opacity: 1 !important;
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: 42px;
+  letter-spacing: -1px;
+  margin: 32px 0 16px;
+  @media (max-width: 1024px) {
+    font-size: 30px;
+    margin: 20px 0 12px;
+  }
+}
+
+h2 {
+  font-size: 26px;
+  letter-spacing: -0.5px;
+  margin: 32px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  @media (max-width: 1024px) {
+    font-size: 22px;
+  }
+}
+
+h3 {
+  font-size: 20px;
+  margin: 24px 0 8px;
+  @media (max-width: 1024px) {
+    font-size: 18px;
+  }
+}
+
+.markdown-body p,
+.markdown-body li {
+  margin: 0 0 16px;
+  color: var(--text) !important;
+  font-weight: 400 !important;
+  line-height: 1.7;
+  opacity: 1 !important;
+}
+
+/* 마크다운 컨테이너 특정 제어 */
+.markdown-body {
+  color: var(--text) !important;
+  text-align: left;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4 {
+  color: var(--text-h) !important;
+}
+
+.markdown-body p {
+  margin-bottom: 1.25rem;
+}
+
+.markdown-body strong,
+.markdown-body b {
+  color: #000000 !important; /* 굵은 글씨는 완전한 블랙으로 강조 */
+  font-weight: 700 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .markdown-body strong,
+  .markdown-body b {
+    color: #ffffff !important;
+  }
+}
+
+/* 주요 관전 포인트 요약 박스 (블릿 리스트) 가독성 */
+.markdown-body ul {
+  padding-left: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.markdown-body li {
+  margin-bottom: 0.75rem;
+}
+
+/* 테이블 가독성 강화 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+th,
+td {
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  text-align: left;
+}
+
+th {
+  background-color: var(--code-bg);
+  color: var(--text-h) !important;
+  font-weight: 600;
+}
+
+code,
+.counter {
+  font-family: var(--mono);
+  display: inline-flex;
+  border-radius: 4px;
+  color: var(--text-h) !important;
+}
+
+code {
+  font-size: 15px;
+  line-height: 135%;
+  padding: 4px 8px;
+  background: var(--code-bg);
+}
+
+/* =========================================================
+   [긴급 보정] OS 다크 모드 전역 변수 간섭 차단
+   우측 본문 영역(흰색 배경) 글자색 검은색 강제 고정
+   ========================================================= */
+
+.markdown-body {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+.markdown-body * {
+  color: #111827 !important;
+  opacity: 1 !important;
+}
+
+/* 강조 구문 및 제목 완전한 블랙 적용 */
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body strong,
+.markdown-body b {
+  color: #000000 !important;
+  font-weight: 700 !important;
+}
+
+/* 표(Table) 내부 텍스트 및 테두리 색상 보정 */
+.markdown-body table,
+.markdown-body th,
+.markdown-body td {
+  color: #111827 !important;
+  border-color: #d1d5db !important;
+}
+
+.markdown-body th {
+  background-color: #f3f4f6 !important;
+  color: #000000 !important;
+}
+
+/* 선택(드래그) 영역 스타일 정돈 */
+::selection {
+  background-color: #c084fc !important;
+  color: #ffffff !important;
+}

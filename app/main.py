@@ -1,0 +1,155 @@
+"""FastAPI 컨트롤러: 라우팅과 HTTP 예외 처리만 담당한다."""
+
+import os
+from contextlib import asynccontextmanager
+from typing import Any, Dict, List
+from urllib.parse import urlparse
+
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
+
+from app.schemas.guide_schema import GenerateRequest, GenerateResponse
+from app.services.guide_service import get_guide, list_guides
+from app.services.scheduler_service import (
+    generate_city_guide,
+    publish_approved_guide,
+    read_sitemap,
+    run_daily_auto_generation,
+    scheduler_status,
+    shutdown_scheduler,
+    start_scheduler,
+)
+
+load_dotenv()
+
+DEFAULT_SITE_URL = "https://bluelog.travel"
+SITE_URL = os.getenv("SITE_URL", DEFAULT_SITE_URL).strip().rstrip("/") or DEFAULT_SITE_URL
+VERCEL_ORIGIN_REGEX = r"https://[a-zA-Z0-9-]+\.vercel\.app"
+
+
+def _origin(value: str) -> str:
+    raw = (value or "").strip().rstrip("/")
+    if not raw:
+        return ""
+    if "://" not in raw:
+        raw = "https://{0}".format(raw)
+    parsed = urlparse(raw)
+    if not parsed.scheme or not parsed.netloc:
+        return ""
+    return "{0}://{1}".format(parsed.scheme, parsed.netloc)
+
+
+def _cors_allow_origins(site_url: str) -> List[str]:
+    """로컬 개발, SITE_URL, bluelog.travel 커스텀 도메인을 허용한다."""
+    origins = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        _origin(site_url),
+        _origin(DEFAULT_SITE_URL),
+        "https://www.bluelog.travel",
+    ]
+    parsed = urlparse(_origin(site_url))
+    host = (parsed.hostname or "").lower()
+    if host.startswith("www."):
+        origins.append("{0}://{1}".format(parsed.scheme, host[4:]))
+    elif host and host not in ("localhost", "127.0.0.1"):
+        origins.append("{0}://www.{1}".format(parsed.scheme, host))
+    unique: List[str] = []
+    for origin in origins:
+        if origin and origin not in unique:
+            unique.append(origin)
+    return unique
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    start_scheduler()
+    yield
+    shutdown_scheduler()
+
+
+app = FastAPI(title="BlueLog AdSense Engine - AI Agents", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_cors_allow_origins(SITE_URL),
+    allow_origin_regex=VERCEL_ORIGIN_REGEX,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.post("/api/v1/generate-guide", response_model=GenerateResponse)
+async def generate_guide(req: GenerateRequest) -> GenerateResponse:
+    try:
+        return await generate_city_guide(req.destination, req.keyword, req.target_language)
+    except Exception as exc:  # noqa: BLE001 - 에이전트 실패를 HTTP 오류로 변환
+        print("❌ [오류] 가이드 생성 실패: {0}".format(exc))
+        raise HTTPException(status_code=500, detail="가이드 생성 중 오류 발생: {0}".format(exc))
+
+
+@app.post("/api/v1/cron/trigger")
+async def trigger_daily_generation() -> Dict[str, Any]:
+    try:
+        return await run_daily_auto_generation()
+    except Exception as exc:  # noqa: BLE001 - 스케줄 실행 실패를 HTTP 오류로 변환
+        print("❌ [오류] 자동 생성 실패: {0}".format(exc))
+        raise HTTPException(status_code=500, detail="자동 생성 중 오류 발생: {0}".format(exc))
+
+
+@app.get("/api/v1/cron/status")
+async def get_cron_status() -> Dict[str, Any]:
+    return scheduler_status()
+
+
+SITEMAP_CONTENT_TYPE = "application/xml; charset=utf-8"
+
+
+@app.get("/sitemap.xml", include_in_schema=False)
+@app.get("/api/v1/sitemap.xml")
+async def get_sitemap(request: Request) -> Response:
+    site_url = request.headers.get("x-site-url", "").strip() or SITE_URL
+    xml = read_sitemap(site_url)
+    return Response(
+        content=xml,
+        media_type=SITEMAP_CONTENT_TYPE,
+        headers={
+            "Content-Type": SITEMAP_CONTENT_TYPE,
+            "X-Content-Type-Options": "nosniff",
+            "Cache-Control": "no-cache",
+        },
+    )
+
+
+@app.get("/api/v1/guides")
+async def get_guides_list() -> List[Dict[str, Any]]:
+    return list_guides()
+
+
+@app.get("/api/v1/guides/{guide_id}")
+async def get_guide_detail(guide_id: str) -> Dict[str, Any]:
+    return get_guide(guide_id)
+
+
+@app.post("/api/v1/guides/{guide_id}/approve")
+async def approve_guide(guide_id: str) -> Dict[str, Any]:
+    try:
+        return await publish_approved_guide(guide_id)
+    except LookupError:
+        raise HTTPException(status_code=404, detail="가이드를 찾을 수 없습니다.")
+    except Exception as exc:  # noqa: BLE001 - 게시 실패를 HTTP 오류로 변환
+        print("❌ [오류] 가이드 승인 실패: {0}".format(exc))
+        raise HTTPException(status_code=500, detail="가이드 승인 중 오류 발생: {0}".format(exc))
+
+
+@app.get("/guides")
+async def get_guides_list_root() -> List[Dict[str, Any]]:
+    return list_guides()
+
+
+@app.get("/guides/{guide_id}")
+async def get_guide_detail_root(guide_id: str) -> Dict[str, Any]:
+    return get_guide(guide_id)

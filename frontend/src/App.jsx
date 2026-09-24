@@ -1,0 +1,318 @@
+import { useEffect, useMemo, useState } from "react";
+import Footer from "./components/Footer";
+import AdSenseUnit from "./components/AdSenseUnit";
+import AdminDrawer from "./components/portal/AdminDrawer";
+import ArticleGrid from "./components/portal/ArticleGrid";
+import ArticleReader from "./components/portal/ArticleReader";
+import CommunityBoard from "./components/portal/CommunityBoard";
+import GlobalNav from "./components/portal/GlobalNav";
+import HeroSearch, { CategoryIntro } from "./components/portal/HeroSearch";
+import PortalSidebar from "./components/portal/PortalSidebar";
+import {
+  API_BASE_URL,
+  fetchGuideCards,
+  fetchGuideDetail,
+  matchesGuideQuery,
+} from "./lib/guideCards";
+import { loadCommunityPosts, saveCommunityPosts } from "./lib/communityStore";
+import { setMetaDescription } from "./lib/articleDocument";
+import { isEnglishLanguage, presentGuideCard, uiCopy } from "./lib/localeCopy";
+import { usePortalRoute } from "./lib/usePortalRoute";
+import "./App.css";
+
+function navActive(route) {
+  if (route.name === "home") return "home";
+  if (route.name === "destinations") return "destinations";
+  if (route.name === "food") return "food";
+  if (route.name === "community") return "community";
+  return "";
+}
+
+export default function App() {
+  const { route, go } = usePortalRoute();
+  const [destination, setDestination] = useState("");
+  const [language, setLanguage] = useState("en");
+  const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [guidesLoading, setGuidesLoading] = useState(true);
+  const [guidesError, setGuidesError] = useState("");
+  const [cards, setCards] = useState([]);
+  const [reloadToken, setReloadToken] = useState(0);
+  const [selectedGuide, setSelectedGuide] = useState(null);
+  const [detailTab, setDetailTab] = useState("article");
+  const [statusMessage, setStatusMessage] = useState("");
+  const [publishing, setPublishing] = useState(false);
+  const [adminOpen, setAdminOpen] = useState(false);
+  const [posts, setPosts] = useState(() => loadCommunityPosts());
+  const [policyId, setPolicyId] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    setGuidesLoading(true);
+    fetchGuideCards()
+      .then((next) => {
+        if (cancelled) return;
+        setCards(next);
+        setGuidesError("");
+      })
+      .catch((err) => {
+        console.error("가이드 목록 로드 실패:", err);
+        if (!cancelled) {
+          setGuidesError("Guides could not be loaded. Check that the API is running.");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setGuidesLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [reloadToken]);
+
+  useEffect(() => {
+    if (route.name !== "article" || !route.guideId) {
+      setSelectedGuide(null);
+      return undefined;
+    }
+    let cancelled = false;
+    setDetailTab("article");
+    fetchGuideDetail(route.guideId)
+      .then((data) => {
+        if (!cancelled) setSelectedGuide(data);
+      })
+      .catch((err) => {
+        console.error("가이드 본문 로드 실패:", err);
+        if (!cancelled) setSelectedGuide(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [route.name, route.guideId, reloadToken]);
+
+  useEffect(() => {
+    document.documentElement.lang = isEnglishLanguage(language) ? "en" : "ko";
+  }, [language]);
+
+  useEffect(() => {
+    const copy = uiCopy(language);
+    const card = presentGuideCard(
+      cards.find((item) => item.id === route.guideId),
+      language,
+    );
+    if (route.name === "article") {
+      document.title = `${card?.title || "Guide"} · BlueLog Travel Engine`;
+      setMetaDescription(card?.summary || copy.siteDescription);
+      return;
+    }
+    const titles = {
+      home: "BlueLog Travel Engine",
+      destinations: "Destinations · BlueLog Travel Engine",
+      food: "Local Food · BlueLog Travel Engine",
+      community: "Community & Viral Log · BlueLog Travel Engine",
+    };
+    document.title = titles[route.name] || "BlueLog Travel Engine";
+    setMetaDescription(copy.siteDescription);
+  }, [route, cards, language]);
+
+  const localizedCards = useMemo(
+    () => cards.map((card) => presentGuideCard(card, language)),
+    [cards, language],
+  );
+
+  const visibleCards = useMemo(() => {
+    return localizedCards.filter((card) => {
+      if (route.name === "destinations" && route.category !== "all" && card.region !== route.category) {
+        return false;
+      }
+      if (route.name === "food" && !card.hasFood) return false;
+      return matchesGuideQuery(card, query);
+    });
+  }, [localizedCards, route, query]);
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    if (route.name !== "home" && route.name !== "community") {
+      go("/");
+    }
+  };
+
+  const openGuide = (card) => {
+    go(`/guide/${encodeURIComponent(card.id)}`);
+    window.scrollTo({ top: 0 });
+  };
+
+  const handleCreatePost = (draft) => {
+    const post = {
+      ...draft,
+      id: globalThis.crypto?.randomUUID?.() || `post-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+    };
+    setPosts((current) => {
+      const next = [post, ...current];
+      saveCommunityPosts(next);
+      return next;
+    });
+    return post;
+  };
+
+  const handleApprove = async () => {
+    if (!route.guideId || publishing) return;
+    setPublishing(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/guides/${encodeURIComponent(route.guideId)}/approve`, {
+        method: "POST",
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.detail || uiCopy(language).approveFailed);
+      }
+      const data = await res.json();
+      setSelectedGuide(data);
+      setStatusMessage(uiCopy(language).statusApproved);
+      setReloadToken((token) => token + 1);
+    } catch (err) {
+      setStatusMessage(uiCopy(language).statusApproveFailed(err.message));
+    } finally {
+      setPublishing(false);
+    }
+  };
+
+  const handleGenerate = async (event) => {
+    event.preventDefault();
+    if (!destination.trim()) return;
+
+    setLoading(true);
+    setStatusMessage(uiCopy(language).statusGenerating);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/generate-guide`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ destination, target_language: language }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.detail || uiCopy(language).generateFailed);
+      }
+
+      const data = await res.json();
+      const qualityScore = data.qa_result?.quality_score;
+      const copy = uiCopy(language);
+      setStatusMessage(
+        qualityScore == null ? copy.statusReady : copy.statusReadyScore(qualityScore),
+      );
+      const newFileName = `${destination.trim().toLowerCase().replace(/\s+/g, "_")}_guide.md`;
+      setDestination("");
+      setAdminOpen(false);
+      setReloadToken((token) => token + 1);
+      go(`/guide/${encodeURIComponent(newFileName)}`);
+      window.scrollTo({ top: 0 });
+    } catch (err) {
+      setStatusMessage(uiCopy(language).statusFailed(err.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const showCatalog = route.name === "home" || route.name === "destinations" || route.name === "food";
+  const showSidebar = showCatalog || route.name === "article";
+
+  return (
+    <div className="portal">
+      <GlobalNav
+        active={navActive(route)}
+        region={route.name === "destinations" ? route.category : ""}
+        query={query}
+        onQueryChange={setQuery}
+        onSearch={handleSearch}
+        language={language}
+        onLanguageChange={setLanguage}
+        onNavigate={go}
+        onOpenAdmin={() => setAdminOpen(true)}
+      />
+
+      {route.name === "home" ? (
+        <>
+          <HeroSearch query={query} onQueryChange={setQuery} onSearch={handleSearch} />
+          <div className="ad-band">
+            <AdSenseUnit slotId="hero-below" format="auto" />
+          </div>
+        </>
+      ) : null}
+
+      <main className="portal-main">
+        {route.name === "community" ? (
+          <CommunityBoard
+            posts={posts}
+            query={query}
+            onCreate={handleCreatePost}
+            language={language}
+          />
+        ) : (
+          <div className={showSidebar ? "portal-body" : "portal-body solo"}>
+            <div className="portal-stream">
+              {route.name === "destinations" || route.name === "food" ? (
+                <CategoryIntro category={route.category} />
+              ) : null}
+              {route.name === "article" ? (
+                <ArticleReader
+                  guide={selectedGuide}
+                  fileName={route.guideId}
+                  tab={detailTab}
+                  onTabChange={setDetailTab}
+                  publishing={publishing}
+                  onApprove={handleApprove}
+                  onBack={() => go("/")}
+                  onOpenCommunity={() => go("/community")}
+                  onNavigate={go}
+                  language={language}
+                />
+              ) : (
+                <ArticleGrid
+                  cards={visibleCards}
+                  loading={guidesLoading}
+                  error={guidesError}
+                  onOpen={openGuide}
+                />
+              )}
+            </div>
+            {showSidebar ? (
+              <PortalSidebar
+                cards={localizedCards}
+                posts={posts}
+                language={language}
+                onPickDestination={(name) => {
+                  setQuery(name);
+                  go("/");
+                }}
+                onOpenLog={(post) => {
+                  go("/community");
+                  window.location.hash = post.id;
+                }}
+              />
+            ) : null}
+          </div>
+        )}
+      </main>
+
+      <Footer
+        onNavigate={go}
+        policyId={policyId}
+        onOpenPolicy={setPolicyId}
+        onClosePolicy={() => setPolicyId("")}
+      />
+
+      <AdminDrawer
+        open={adminOpen}
+        onClose={() => setAdminOpen(false)}
+        destination={destination}
+        onDestinationChange={setDestination}
+        language={language}
+        loading={loading}
+        statusMessage={statusMessage}
+        onSubmit={handleGenerate}
+      />
+    </div>
+  );
+}
