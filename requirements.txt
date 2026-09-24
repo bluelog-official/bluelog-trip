@@ -5,13 +5,13 @@
 # and optionally OPENROUTER_API_KEY plus PEXELS_API_KEY, in the project .env.
 # Public sitemap hosts come from SITE_URL or frontend VITE_SITE_URL.
 
-fastapi==0.128.8
-uvicorn[standard]==0.39.0
-google-genai==1.47.0
-litellm==1.83.9
-pydantic==2.12.5
-python-dotenv==1.0.1
-httpx==0.28.1
-requests==2.32.5
-pytest==8.4.2
-apscheduler==3.10.4
+fastapi>=0.128.8
+uvicorn[standard]>=0.39.0
+google-genai>=1.47.0
+litellm>=1.30.0
+pydantic>=2.12.5
+python-dotenv>=1.0.1
+httpx>=0.28.1
+requests>=2.32.5
+pytest>=8.4.2
+apscheduler>=3.10.4
