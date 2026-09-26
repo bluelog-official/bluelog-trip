@@ -7,7 +7,7 @@ import { defineConfig, loadEnv } from "vite";
 
 const FRONTEND_DIR = path.dirname(fileURLToPath(import.meta.url));
 const GUIDES_DIR = path.resolve(FRONTEND_DIR, "../guides");
-const DEFAULT_SITE_URL = "https://bluelogtrip.com";
+const DEFAULT_SITE_URL = "https://www.bluelogtrip.com";
 
 function stripScripts(xml) {
   return String(xml || "")

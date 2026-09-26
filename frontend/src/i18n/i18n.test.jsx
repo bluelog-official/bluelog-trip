@@ -162,6 +162,7 @@ describe("language switcher", () => {
     fireEvent.change(screen.getByLabelText("언어"), { target: { value: "en" } });
     await i18n.changeLanguage("en");
     expect(localStorage.getItem(APP_LANG_KEY)).toBe("en");
+    expect(document.documentElement.lang).toBe("en");
     expect(screen.getByRole("heading", { name: "Privacy Policy" })).toBeTruthy();
     expect(HANGUL.test(view.container.textContent)).toBe(false);
   });

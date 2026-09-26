@@ -33,6 +33,7 @@ import {
 } from "./lib/adminSession";
 import { loadCommunityPosts, saveCommunityPosts } from "./lib/communityStore";
 import { setMetaDescription } from "./lib/articleDocument";
+import { applyPageHead } from "./lib/documentHead";
 import { appLanguage } from "./i18n/i18n";
 import { presentGuideCard } from "./lib/localeCopy";
 import { usePortalRoute } from "./lib/usePortalRoute";
@@ -161,36 +162,57 @@ export default function App() {
   };
 
   useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
+
+  useEffect(() => {
     const card = presentGuideCard(
       cards.find((item) => item.id === route.guideId),
       language,
     );
+    const locale = language === "ko" ? "ko_KR" : "en_US";
+    let title = t("meta.homeTitle");
+    let description = t("meta.siteDescription");
+    let type = "website";
+    let image = "";
     if (route.name === "article") {
-      document.title = t("meta.articleTitle", { title: card?.title || t("guide.articleTab") });
-      setMetaDescription(card?.summary || t("meta.siteDescription"));
-      return;
+      title = t("meta.articleTitle", { title: card?.title || t("guide.articleTab") });
+      description = card?.summary || t("meta.siteDescription");
+      type = "article";
+      image = card?.image || "";
+    } else {
+      const titles = {
+        home: t("meta.homeTitle"),
+        destinations: t("meta.destinationsTitle"),
+        food: t("meta.foodTitle"),
+        community: t("meta.communityTitle"),
+        dashboard: t("meta.dashboardTitle"),
+        privacy: t("meta.privacyTitle"),
+        terms: t("meta.termsTitle"),
+        about: t("meta.aboutTitle"),
+        contact: t("meta.contactTitle"),
+        notFound: t("meta.notFoundTitle"),
+      };
+      const descriptions = {
+        privacy: t("meta.privacyDescription"),
+        terms: t("meta.termsDescription"),
+        about: t("meta.aboutDescription"),
+        contact: t("meta.contactDescription"),
+        notFound: t("meta.notFoundDescription"),
+      };
+      title = titles[route.name] || t("meta.homeTitle");
+      description = descriptions[route.name] || t("meta.siteDescription");
     }
-    const titles = {
-      home: t("meta.homeTitle"),
-      destinations: t("meta.destinationsTitle"),
-      food: t("meta.foodTitle"),
-      community: t("meta.communityTitle"),
-      dashboard: t("meta.dashboardTitle"),
-      privacy: t("meta.privacyTitle"),
-      terms: t("meta.termsTitle"),
-      about: t("meta.aboutTitle"),
-      contact: t("meta.contactTitle"),
-      notFound: t("meta.notFoundTitle"),
-    };
-    const descriptions = {
-      privacy: t("meta.privacyDescription"),
-      terms: t("meta.termsDescription"),
-      about: t("meta.aboutDescription"),
-      contact: t("meta.contactDescription"),
-      notFound: t("meta.notFoundDescription"),
-    };
-    document.title = titles[route.name] || t("meta.homeTitle");
-    setMetaDescription(descriptions[route.name] || t("meta.siteDescription"));
+    document.title = title;
+    setMetaDescription(description);
+    applyPageHead({
+      title,
+      description,
+      pathname: window.location.pathname,
+      type,
+      locale,
+      image,
+    });
   }, [route, cards, language, t]);
 
   const localizedCards = useMemo(
