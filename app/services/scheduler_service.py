@@ -213,26 +213,41 @@ def _sitemap_sources() -> List[Path]:
     return [found[name] for name in sorted(found)]
 
 
+def _sitemap_url(loc: str, changefreq: str, priority: str, lastmod: str = "") -> str:
+    """Sitemap protocol url 항목을 줄 단위 태그로 만든다."""
+    lines = [
+        "  <url>",
+        "    <loc>{0}</loc>".format(escape(loc)),
+    ]
+    if lastmod:
+        lines.append("    <lastmod>{0}</lastmod>".format(escape(lastmod)))
+    lines.extend(
+        [
+            "    <changefreq>{0}</changefreq>".format(escape(changefreq)),
+            "    <priority>{0}</priority>".format(escape(priority)),
+            "  </url>",
+        ]
+    )
+    return "\n".join(lines)
+
+
 def refresh_sitemap(base_url: str = "") -> Path:
-    """guides 디렉터리의 마크다운을 urlset으로 다시 쓴다."""
+    """guides 디렉터리의 마크다운을 표준 Sitemap XML urlset으로 다시 쓴다."""
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     site_url = resolve_site_base_url(base_url)
-    urls: List[str] = []
+    home = "{0}/".format(site_url) if site_url else "/"
+    entries = [_sitemap_url(home, changefreq="daily", priority="1.0")]
     for path in _sitemap_sources():
         lastmod = datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc).date().isoformat()
-        filename = escape(path.name)
-        loc = "{0}/guide/{1}".format(site_url, filename) if site_url else "/guide/{0}".format(filename)
-        urls.append(
-            "  <url><loc>{0}</loc><lastmod>{1}</lastmod></url>".format(loc, lastmod)
-        )
-    body = "\n".join(urls)
+        loc = "{0}/guide/{1}".format(site_url, path.name) if site_url else "/guide/{0}".format(path.name)
+        entries.append(_sitemap_url(loc, changefreq="weekly", priority="0.8", lastmod=lastmod))
     document = strip_script_tags(
         (
             '<?xml version="1.0" encoding="UTF-8"?>\n'
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
             "{0}\n"
             "</urlset>\n"
-        ).format(body)
+        ).format("\n".join(entries))
     )
     SITEMAP_PATH.write_text(document, encoding="utf-8")
     return SITEMAP_PATH

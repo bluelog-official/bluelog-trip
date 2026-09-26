@@ -175,9 +175,6 @@ async def get_cron_status() -> Dict[str, Any]:
     return scheduler_status()
 
 
-SITEMAP_CONTENT_TYPE = "application/xml; charset=utf-8"
-
-
 @app.get("/sitemap.xml", include_in_schema=False)
 @app.get("/api/v1/sitemap.xml")
 async def get_sitemap(request: Request) -> Response:
@@ -185,9 +182,9 @@ async def get_sitemap(request: Request) -> Response:
     xml = read_sitemap(site_url)
     return Response(
         content=xml,
-        media_type=SITEMAP_CONTENT_TYPE,
+        media_type="application/xml",
         headers={
-            "Content-Type": SITEMAP_CONTENT_TYPE,
+            "Content-Type": "application/xml; charset=utf-8",
             "X-Content-Type-Options": "nosniff",
             "Cache-Control": "no-cache",
         },

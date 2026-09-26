@@ -24,9 +24,18 @@ function requestOrigin(req) {
   return `${proto}://${host}`;
 }
 
+function sitemapUrl({ loc, lastmod, changefreq, priority }) {
+  const lines = ["  <url>", `    <loc>${loc}</loc>`];
+  if (lastmod) lines.push(`    <lastmod>${lastmod}</lastmod>`);
+  lines.push(`    <changefreq>${changefreq}</changefreq>`);
+  lines.push(`    <priority>${priority}</priority>`);
+  lines.push("  </url>");
+  return lines.join("\n");
+}
+
 function buildStaticSitemap(siteUrl) {
   const origin = String(siteUrl || DEFAULT_SITE_URL).replace(/\/$/, "") || DEFAULT_SITE_URL;
-  const entries = [];
+  const entries = [sitemapUrl({ loc: `${origin}/`, changefreq: "daily", priority: "1.0" })];
   if (fs.existsSync(GUIDES_DIR)) {
     const names = fs
       .readdirSync(GUIDES_DIR)
@@ -34,7 +43,14 @@ function buildStaticSitemap(siteUrl) {
       .sort();
     for (const name of names) {
       const modified = fs.statSync(path.join(GUIDES_DIR, name)).mtime.toISOString().slice(0, 10);
-      entries.push(`  <url><loc>${origin}/guide/${name}</loc><lastmod>${modified}</lastmod></url>`);
+      entries.push(
+        sitemapUrl({
+          loc: `${origin}/guide/${name}`,
+          lastmod: modified,
+          changefreq: "weekly",
+          priority: "0.8",
+        }),
+      );
     }
   }
   return stripScripts(
@@ -77,9 +93,7 @@ function pureSitemapPlugin(env) {
           res.statusCode = 502;
           res.setHeader("Content-Type", "application/xml; charset=utf-8");
           res.setHeader("X-Content-Type-Options", "nosniff");
-          res.end(
-            '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>\n',
-          );
+          res.end(buildStaticSitemap(siteUrl || DEFAULT_SITE_URL));
         }
       });
     },

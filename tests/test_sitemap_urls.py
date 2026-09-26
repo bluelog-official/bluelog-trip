@@ -1,5 +1,7 @@
 """sitemap loc는 공개 SITE_URL을 쓰고 script 태그를 남기지 않는다."""
 
+from xml.etree import ElementTree
+
 from fastapi.testclient import TestClient
 
 from app.main import app
@@ -21,12 +23,22 @@ def test_sitemap_uses_site_url_and_drops_scripts(monkeypatch, tmp_path):
 
     xml = scheduler_service.read_sitemap("http://127.0.0.1:8000")
 
+    assert xml.lstrip().startswith('<?xml version="1.0" encoding="UTF-8"?>')
+    assert "https://bluelogtrip.com/" in xml
     assert "https://bluelogtrip.com/guide/rome_guide.md" in xml
+    assert "<changefreq>daily</changefreq>" in xml
+    assert "<priority>1.0</priority>" in xml
+    assert "<changefreq>weekly</changefreq>" in xml
+    assert "<priority>0.8</priority>" in xml
     assert "127.0.0.1" not in xml
     assert "localhost" not in xml
     assert ":8000" not in xml
     assert "<script" not in xml.lower()
     assert 'xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' in xml
+    root = ElementTree.fromstring(xml)
+    locations = [node.text or "" for node in root.iter() if node.tag.endswith("loc")]
+    assert locations[0] == "https://bluelogtrip.com/"
+    assert "https://bluelogtrip.com/guide/rome_guide.md" in locations
 
 
 def test_sitemap_response_is_xml_without_scripts():
@@ -39,6 +51,11 @@ def test_sitemap_response_is_xml_without_scripts():
         assert "charset=utf-8" in content_type
         assert "<script" not in response.text.lower()
         assert response.text.lstrip().startswith("<?xml")
+        root = ElementTree.fromstring(response.text)
+        locations = [node.text or "" for node in root.iter() if node.tag.endswith("loc")]
+        assert locations[0].endswith("/")
+        assert any(node.tag.endswith("changefreq") for node in root.iter())
+        assert any(node.tag.endswith("priority") for node in root.iter())
 
 
 def test_localhost_origin_is_used_only_when_no_public_site_url(monkeypatch):
