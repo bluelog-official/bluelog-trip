@@ -1,4 +1,26 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+
+export function normalizePath(pathname) {
+  const path = pathname || "/";
+  if (path === "/") return "/";
+  return path.replace(/\/+$/, "") || "/";
+}
+
+export function isAdminPath(pathname) {
+  const path = normalizePath(pathname);
+  return path === "/admin" || path.startsWith("/admin/");
+}
+
+export function isAdminRequest(pathname, _search) {
+  return isAdminPath(pathname);
+}
+
+function contentPath(pathname) {
+  const path = normalizePath(pathname);
+  if (path === "/admin") return "/";
+  if (path.startsWith("/admin/")) return path.slice("/admin".length) || "/";
+  return path;
+}
 
 export function parseRoute(pathname) {
   const path = pathname || "/";
@@ -28,22 +50,66 @@ export function parseRoute(pathname) {
   return { name: "home", category: "home", guideId: "" };
 }
 
+function stripLegacyAdminQuery() {
+  const url = new URL(window.location.href);
+  if (!url.searchParams.has("admin")) return;
+  url.searchParams.delete("admin");
+  const next = `${url.pathname}${url.search}${url.hash}`;
+  window.history.replaceState(window.history.state, "", next);
+}
+
+function readLocation() {
+  const pathname = window.location.pathname;
+  return {
+    route: parseRoute(contentPath(pathname)),
+    adminGate: isAdminPath(pathname),
+  };
+}
+
 export function usePortalRoute() {
-  const [route, setRoute] = useState(() => parseRoute(window.location.pathname));
+  const initial = readLocation();
+  const [route, setRoute] = useState(initial.route);
+  const [adminGate, setAdminGate] = useState(initial.adminGate);
 
   useEffect(() => {
-    const sync = () => setRoute(parseRoute(window.location.pathname));
+    stripLegacyAdminQuery();
+    const sync = () => {
+      stripLegacyAdminQuery();
+      const next = readLocation();
+      setRoute(next.route);
+      setAdminGate(next.adminGate);
+    };
     window.addEventListener("popstate", sync);
     return () => window.removeEventListener("popstate", sync);
   }, []);
 
-  const go = (path) => {
-    const next = path.startsWith("/") ? path : `/${path}`;
-    if (window.location.pathname !== next) {
+  const go = useCallback((path) => {
+    const raw = path.startsWith("/") ? path : `/${path}`;
+    const url = new URL(raw, window.location.origin);
+    url.searchParams.delete("admin");
+    const next = `${url.pathname}${url.search}${url.hash}`;
+    const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (current !== next) {
       window.history.pushState({ path: next }, "", next);
     }
-    setRoute(parseRoute(next));
-  };
+    setRoute(parseRoute(contentPath(url.pathname)));
+    setAdminGate(isAdminPath(url.pathname));
+  }, []);
 
-  return { route, go };
+  const leaveAdminGate = useCallback((mode = "push") => {
+    const url = new URL(window.location.href);
+    url.pathname = contentPath(url.pathname);
+    url.searchParams.delete("admin");
+    const next = `${url.pathname}${url.search}${url.hash}`;
+    const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (current !== next) {
+      const state = { path: next };
+      if (mode === "replace") window.history.replaceState(state, "", next);
+      else window.history.pushState(state, "", next);
+    }
+    setRoute(parseRoute(url.pathname));
+    setAdminGate(false);
+  }, []);
+
+  return { route, go, adminGate, leaveAdminGate };
 }

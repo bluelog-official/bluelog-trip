@@ -14,6 +14,7 @@ export default function ArticleReader({
   onOpenCommunity,
   onNavigate,
   language,
+  adminMode = false,
 }) {
   const copy = uiCopy(language);
 
@@ -36,20 +37,22 @@ export default function ArticleReader({
           onNavigate={onNavigate}
         />
       ) : null}
-      <div className="review-bar">
-        <div>
-          <strong>{approved ? copy.reviewApproved : copy.reviewPending}</strong>
-          <p>{approved ? copy.reviewApprovedHelp : copy.reviewPendingHelp}</p>
+      {adminMode ? (
+        <div className="review-bar">
+          <div>
+            <strong>{approved ? copy.reviewApproved : copy.reviewPending}</strong>
+            <p>{approved ? copy.reviewApprovedHelp : copy.reviewPendingHelp}</p>
+          </div>
+          <button
+            type="button"
+            className="approve-btn"
+            onClick={onApprove}
+            disabled={approved || publishing}
+          >
+            {publishing ? copy.publishing : copy.approve}
+          </button>
         </div>
-        <button
-          type="button"
-          className="approve-btn"
-          onClick={onApprove}
-          disabled={approved || publishing}
-        >
-          {publishing ? copy.publishing : copy.approve}
-        </button>
-      </div>
+      ) : null}
       <div className="reader-tools">
         <div className="detail-tabs" role="tablist">
           <button

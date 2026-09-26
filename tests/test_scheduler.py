@@ -1,4 +1,5 @@
 import asyncio
+import os
 from pathlib import Path
 from xml.etree import ElementTree
 
@@ -21,7 +22,18 @@ async def run_scheduler_test():
         assert status_payload["next_run_time"], "다음 실행 시각이 없습니다."
         assert status_payload["next_city"] in TARGET_CITIES
 
-        trigger_response = await client.post("/api/v1/cron/trigger")
+        login = await client.post(
+            "/api/v1/admin/login",
+            json={
+                "username": os.getenv("ADMIN_USERNAME", "admin"),
+                "password": os.getenv("ADMIN_PASSWORD", "bluelog123!"),
+            },
+        )
+        assert login.status_code == 200, login.text
+        token = login.json()["access_token"]
+        auth_headers = {"Authorization": "Bearer {0}".format(token)}
+
+        trigger_response = await client.post("/api/v1/cron/trigger", headers=auth_headers)
         print("📡 trigger 상태 코드: {0}".format(trigger_response.status_code))
         assert trigger_response.status_code == 200, trigger_response.text
         generated = trigger_response.json()
@@ -60,7 +72,10 @@ async def run_scheduler_test():
         else:
             assert all(generated["guide_id"] not in loc for loc in locations), "검수 전 가이드가 sitemap에 포함되었습니다."
 
-        approve_response = await client.post("/api/v1/guides/{0}/approve".format(generated["guide_id"]))
+        approve_response = await client.post(
+            "/api/v1/guides/{0}/approve".format(generated["guide_id"]),
+            headers=auth_headers,
+        )
         print("📡 approve 상태 코드: {0}".format(approve_response.status_code))
         assert approve_response.status_code == 200, approve_response.text
         approved = approve_response.json()

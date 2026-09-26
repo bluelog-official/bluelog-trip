@@ -19,6 +19,8 @@ export default function GlobalNav({
   onLanguageChange,
   onNavigate,
   onOpenAdmin,
+  onLogout,
+  adminMode = false,
 }) {
   const [destOpen, setDestOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -142,9 +144,16 @@ export default function GlobalNav({
             <option value="en">{copy.languageEnglish}</option>
             <option value="ko">{copy.languageKorean}</option>
           </select>
-          <button type="button" className="admin-btn" onClick={onOpenAdmin}>
-            Admin / Generator
-          </button>
+          {adminMode ? (
+            <>
+              <button type="button" className="admin-btn" onClick={onOpenAdmin}>
+                Admin / Generator
+              </button>
+              <button type="button" className="logout-btn" onClick={onLogout}>
+                Logout
+              </button>
+            </>
+          ) : null}
         </div>
       </div>
     </header>

@@ -2,15 +2,17 @@
 
 import os
 from contextlib import asynccontextmanager
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from urllib.parse import urlparse
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 
+from app.schemas.auth_schema import AdminLoginRequest, AdminLoginResponse
 from app.schemas.guide_schema import GenerateRequest, GenerateResponse
+from app.services.auth_service import authenticate_admin, authorization_is_valid
 from app.services.guide_service import get_guide, list_guides
 from app.services.scheduler_service import (
     generate_city_guide,
@@ -83,7 +85,29 @@ app.add_middleware(
 )
 
 
-@app.post("/api/v1/generate-guide", response_model=GenerateResponse)
+def require_admin(authorization: Optional[str] = Header(default=None)) -> None:
+    """Authorization: Bearer 토큰이 없거나 유효하지 않으면 401을 반환한다."""
+    if not authorization_is_valid(authorization or ""):
+        raise HTTPException(
+            status_code=401,
+            detail="Unauthorized",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+
+@app.post("/api/v1/admin/login", response_model=AdminLoginResponse)
+async def admin_login(body: AdminLoginRequest) -> AdminLoginResponse:
+    token = authenticate_admin(body.username, body.password)
+    if not token:
+        raise HTTPException(status_code=401, detail="잘못된 관리자 정보입니다")
+    return AdminLoginResponse(access_token=token)
+
+
+@app.post(
+    "/api/v1/generate-guide",
+    response_model=GenerateResponse,
+    dependencies=[Depends(require_admin)],
+)
 async def generate_guide(req: GenerateRequest) -> GenerateResponse:
     try:
         return await generate_city_guide(req.destination, req.keyword, req.target_language)
@@ -92,7 +116,7 @@ async def generate_guide(req: GenerateRequest) -> GenerateResponse:
         raise HTTPException(status_code=500, detail="가이드 생성 중 오류 발생: {0}".format(exc))
 
 
-@app.post("/api/v1/cron/trigger")
+@app.post("/api/v1/cron/trigger", dependencies=[Depends(require_admin)])
 async def trigger_daily_generation() -> Dict[str, Any]:
     try:
         return await run_daily_auto_generation()
@@ -135,7 +159,7 @@ async def get_guide_detail(guide_id: str) -> Dict[str, Any]:
     return get_guide(guide_id)
 
 
-@app.post("/api/v1/guides/{guide_id}/approve")
+@app.post("/api/v1/guides/{guide_id}/approve", dependencies=[Depends(require_admin)])
 async def approve_guide(guide_id: str) -> Dict[str, Any]:
     try:
         return await publish_approved_guide(guide_id)

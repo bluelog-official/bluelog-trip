@@ -199,6 +199,18 @@
   white-space: nowrap;
 }
 
+.logout-btn {
+  background: transparent;
+  color: #123044 !important;
+  border: 1px solid #123044;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
 .hero {
   background:
     radial-gradient(circle at 85% 20%, rgba(255, 214, 153, 0.35), transparent 28%),
@@ -857,6 +869,112 @@
   color: #292524 !important;
   font-size: 0.98rem;
   line-height: 1.65;
+}
+
+.login-root {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.login-backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: rgba(16, 42, 58, 0.55);
+  cursor: pointer;
+}
+
+.login-card {
+  position: relative;
+  z-index: 1;
+  width: min(420px, 100%);
+  max-height: calc(100svh - 40px);
+  overflow: auto;
+  padding: 22px;
+  border-radius: 16px;
+  background: #fffdf9;
+  color: #1c1917 !important;
+  box-shadow: 0 24px 64px rgba(16, 42, 58, 0.32);
+}
+
+.login-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.login-kicker {
+  margin: 0 !important;
+  color: #0f766e !important;
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.login-card h2 {
+  margin: 6px 0 0 !important;
+  color: #102a3a !important;
+  font-size: 1.6rem !important;
+}
+
+.login-close {
+  color: #44403c !important;
+  background: transparent;
+  border: none;
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.login-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #44403c !important;
+}
+
+.login-input {
+  border: 1px solid #d6cfc3;
+  background: #fff;
+  color: #1c1917;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.login-error {
+  margin: 4px 0 0 !important;
+  color: #b91c1c !important;
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.login-submit {
+  margin-top: 8px;
+  border: none;
+  border-radius: 10px;
+  background: #0f766e;
+  color: #fff !important;
+  font-weight: 700;
+  padding: 12px;
+  cursor: pointer;
+}
+
+.login-submit:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
 }
 
 .drawer-root {

@@ -1,4 +1,5 @@
 import asyncio
+import os
 import re
 from httpx import AsyncClient, ASGITransport
 from app.main import app
@@ -8,8 +9,22 @@ async def run_pipeline_test():
     
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
+        login = await client.post(
+            "/api/v1/admin/login",
+            json={
+                "username": os.getenv("ADMIN_USERNAME", "admin"),
+                "password": os.getenv("ADMIN_PASSWORD", "bluelog123!"),
+            },
+        )
+        assert login.status_code == 200, login.text
+        token = login.json()["access_token"]
+
         # 테스트 요청 전송 (Bali 목적지)
-        response = await client.post("/api/v1/generate-guide", json={"destination": "Bali"})
+        response = await client.post(
+            "/api/v1/generate-guide",
+            json={"destination": "Bali"},
+            headers={"Authorization": "Bearer {0}".format(token)},
+        )
         
         print(f"📡 응답 상태 코드: {response.status_code}")
         assert response.status_code == 200, f"HTTP Error {response.status_code}: {response.text}"

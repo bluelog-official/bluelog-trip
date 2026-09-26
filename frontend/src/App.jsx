@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Footer from "./components/Footer";
 import AdSenseUnit from "./components/AdSenseUnit";
 import AdminDrawer from "./components/portal/AdminDrawer";
+import AdminLogin from "./components/portal/AdminLogin";
 import ArticleGrid from "./components/portal/ArticleGrid";
 import ArticleReader from "./components/portal/ArticleReader";
 import CommunityBoard from "./components/portal/CommunityBoard";
@@ -14,6 +15,12 @@ import {
   fetchGuideDetail,
   matchesGuideQuery,
 } from "./lib/guideCards";
+import {
+  adminAuthHeaders,
+  clearAdminToken,
+  readAdminToken,
+  storeAdminToken,
+} from "./lib/adminSession";
 import { loadCommunityPosts, saveCommunityPosts } from "./lib/communityStore";
 import { setMetaDescription } from "./lib/articleDocument";
 import { isEnglishLanguage, presentGuideCard, uiCopy } from "./lib/localeCopy";
@@ -29,7 +36,10 @@ function navActive(route) {
 }
 
 export default function App() {
-  const { route, go } = usePortalRoute();
+  const { route, go, adminGate, leaveAdminGate } = usePortalRoute();
+  const [adminSession, setAdminSession] = useState(() => Boolean(readAdminToken()));
+  const [loginOpen, setLoginOpen] = useState(false);
+  const adminMode = adminSession;
   const [destination, setDestination] = useState("");
   const [language, setLanguage] = useState("en");
   const [query, setQuery] = useState("");
@@ -92,6 +102,42 @@ export default function App() {
   useEffect(() => {
     document.documentElement.lang = isEnglishLanguage(language) ? "en" : "ko";
   }, [language]);
+
+  useEffect(() => {
+    if (!adminMode) setAdminOpen(false);
+  }, [adminMode]);
+
+  useEffect(() => {
+    if (adminSession && adminGate) leaveAdminGate("replace");
+  }, [adminSession, adminGate, leaveAdminGate]);
+
+  const endAdminSession = () => {
+    clearAdminToken();
+    setAdminSession(false);
+    setAdminOpen(false);
+  };
+
+  const handleLogout = () => {
+    endAdminSession();
+    setLoginOpen(false);
+    if (adminGate) leaveAdminGate("replace");
+  };
+
+  const handleLoginSuccess = (token) => {
+    storeAdminToken(token);
+    setAdminSession(true);
+    setLoginOpen(false);
+  };
+
+  const handleCloseLogin = () => {
+    setLoginOpen(false);
+    if (adminGate) leaveAdminGate("push");
+  };
+
+  const handleUnauthorized = () => {
+    endAdminSession();
+    setLoginOpen(true);
+  };
 
   useEffect(() => {
     const copy = uiCopy(language);
@@ -161,7 +207,12 @@ export default function App() {
     try {
       const res = await fetch(`${API_BASE_URL}/guides/${encodeURIComponent(route.guideId)}/approve`, {
         method: "POST",
+        headers: adminAuthHeaders(),
       });
+      if (res.status === 401) {
+        handleUnauthorized();
+        throw new Error(uiCopy(language).approveFailed);
+      }
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.detail || uiCopy(language).approveFailed);
@@ -182,15 +233,19 @@ export default function App() {
     if (!destination.trim()) return;
 
     setLoading(true);
-    setStatusMessage(uiCopy(language).statusGenerating);
+    setStatusMessage("");
 
     try {
       const res = await fetch(`${API_BASE_URL}/generate-guide`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: adminAuthHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({ destination, target_language: language }),
       });
 
+      if (res.status === 401) {
+        handleUnauthorized();
+        throw new Error(uiCopy(language).generateFailed);
+      }
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.detail || uiCopy(language).generateFailed);
@@ -230,6 +285,8 @@ export default function App() {
         onLanguageChange={setLanguage}
         onNavigate={go}
         onOpenAdmin={() => setAdminOpen(true)}
+        onLogout={handleLogout}
+        adminMode={adminMode}
       />
 
       {route.name === "home" ? (
@@ -267,6 +324,7 @@ export default function App() {
                   onOpenCommunity={() => go("/community")}
                   onNavigate={go}
                   language={language}
+                  adminMode={adminMode}
                 />
               ) : (
                 <ArticleGrid
@@ -303,16 +361,21 @@ export default function App() {
         onClosePolicy={() => setPolicyId("")}
       />
 
-      <AdminDrawer
-        open={adminOpen}
-        onClose={() => setAdminOpen(false)}
-        destination={destination}
-        onDestinationChange={setDestination}
-        language={language}
-        loading={loading}
-        statusMessage={statusMessage}
-        onSubmit={handleGenerate}
-      />
+      {adminMode ? (
+        <AdminDrawer
+          open={adminOpen}
+          onClose={() => setAdminOpen(false)}
+          destination={destination}
+          onDestinationChange={setDestination}
+          language={language}
+          loading={loading}
+          statusMessage={statusMessage}
+          onSubmit={handleGenerate}
+        />
+      ) : null}
+      {!adminSession && (adminGate || loginOpen) ? (
+        <AdminLogin onClose={handleCloseLogin} onSuccess={handleLoginSuccess} />
+      ) : null}
     </div>
   );
 }

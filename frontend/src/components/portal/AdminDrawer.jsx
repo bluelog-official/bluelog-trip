@@ -54,11 +54,9 @@ export default function AdminDrawer({
             disabled={loading}
             autoFocus
           />
-          <button type="submit" className="gen-submit" disabled={loading}>
+          <button type="submit" className="gen-submit" disabled={loading} aria-busy={loading}>
             {loading ? (
-              <>
-                <Loader2 className="spinner" size={16} /> {copy.adminGenerating}
-              </>
+              <Loader2 className="spinner" size={16} aria-label={copy.adminGenerating} />
             ) : (
               <>
                 <Sparkles size={16} /> {copy.adminSubmit}
