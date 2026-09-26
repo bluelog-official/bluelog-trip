@@ -19,6 +19,7 @@ from app.schemas.dashboard_schema import DashboardStats
 from app.schemas.guide_schema import GenerateRequest, GenerateResponse
 from app.services.auth_service import admin_password, authenticate_admin, authorization_is_valid
 from app.services.dashboard_service import build_dashboard_stats
+from app.services.marketing_service import dismiss_marketing_alert
 from app.services.guide_service import get_guide, list_guides
 from app.services.scheduler_service import (
     generate_city_guide,
@@ -134,6 +135,17 @@ async def admin_login(body: AdminLoginRequest) -> AdminLoginResponse:
 )
 async def get_dashboard_stats() -> DashboardStats:
     return DashboardStats.model_validate(build_dashboard_stats())
+
+
+@app.delete(
+    "/api/v1/admin/marketing-alerts/{alert_id}",
+    dependencies=[Depends(require_admin)],
+)
+async def dismiss_marketing_alert_route(alert_id: int) -> Dict[str, Any]:
+    """확인한 Reddit 초안을 대시보드 목록에서 제거한다."""
+    if not dismiss_marketing_alert(alert_id):
+        raise HTTPException(status_code=404, detail="마케팅 알림을 찾을 수 없습니다.")
+    return {"ok": True, "id": alert_id}
 
 
 @app.post(

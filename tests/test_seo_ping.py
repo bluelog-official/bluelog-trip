@@ -94,8 +94,14 @@ def test_daily_generation_publishes_passing_guide(monkeypatch, tmp_path):
     monkeypatch.setattr(scheduler_service, "OUTPUT_DIR", tmp_path)
     monkeypatch.setattr(scheduler_service, "SITEMAP_PATH", tmp_path / "sitemap.xml")
     monkeypatch.setattr(scheduler_service, "STATE_PATH", tmp_path / "scheduler_state.json")
+    marketing_calls = []
+
+    def fake_marketing(guide_data):
+        marketing_calls.append(guide_data.get("id"))
+
     monkeypatch.setattr(scheduler_service, "generate_city_guide", fake_generate)
     monkeypatch.setattr(scheduler_service.requests, "get", fake_get)
+    monkeypatch.setattr(scheduler_service, "run_marketing_pipeline", fake_marketing)
 
     try:
         result = asyncio.run(scheduler_service.run_daily_auto_generation())
@@ -110,6 +116,7 @@ def test_daily_generation_publishes_passing_guide(monkeypatch, tmp_path):
     assert result["seo_ping"]["ok"] is True
     assert order[0][0] == "generate"
     assert "ping" in order
+    assert marketing_calls == ["new_york_guide.md"]
     assert (tmp_path / "new_york_guide.md").exists()
     sitemap = (tmp_path / "sitemap.xml").read_text(encoding="utf-8")
     assert "new_york_guide.md" in sitemap
@@ -141,8 +148,15 @@ def test_daily_generation_holds_low_score(monkeypatch, tmp_path):
     monkeypatch.setattr(scheduler_service, "OUTPUT_DIR", tmp_path)
     monkeypatch.setattr(scheduler_service, "SITEMAP_PATH", tmp_path / "sitemap.xml")
     monkeypatch.setattr(scheduler_service, "STATE_PATH", tmp_path / "scheduler_state.json")
+    marketing_calls = []
+
     monkeypatch.setattr(scheduler_service, "generate_city_guide", fake_generate)
     monkeypatch.setattr(scheduler_service.requests, "get", fail_get)
+    monkeypatch.setattr(
+        scheduler_service,
+        "run_marketing_pipeline",
+        lambda guide_data: marketing_calls.append(guide_data),
+    )
 
     try:
         result = asyncio.run(scheduler_service.run_daily_auto_generation())
@@ -156,6 +170,7 @@ def test_daily_generation_holds_low_score(monkeypatch, tmp_path):
     assert result["qa_result"]["is_approved"] is False
     assert "seo_ping" not in result
     assert order == ["generate"]
+    assert marketing_calls == []
     assert (tmp_path / "new_york_guide.md").exists()
     assert not (tmp_path / "sitemap.xml").exists()
 

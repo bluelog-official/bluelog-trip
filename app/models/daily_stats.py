@@ -2,7 +2,7 @@
 
 import sqlite3
 from pathlib import Path
-from typing import Tuple
+from typing import Any, Dict, List, Tuple
 
 
 _SCHEMA = """
@@ -100,3 +100,24 @@ def insert_marketing_alert(
     except Exception:
         conn.execute("ROLLBACK")
         raise
+
+
+def fetch_marketing_alerts(conn: sqlite3.Connection, limit: int = 20) -> List[Dict[str, Any]]:
+    """최근 마케팅 초안을 최신순으로 읽는다."""
+    safe_limit = max(1, int(limit))
+    rows = conn.execute(
+        """
+        SELECT id, guide_id, channel, title, body, created_at
+        FROM marketing_alerts
+        ORDER BY id DESC
+        LIMIT ?
+        """,
+        (safe_limit,),
+    ).fetchall()
+    return [dict(row) for row in rows]
+
+
+def delete_marketing_alert(conn: sqlite3.Connection, alert_id: int) -> bool:
+    """확인한 마케팅 초안을 지운다. 대상이 없으면 False."""
+    cursor = conn.execute("DELETE FROM marketing_alerts WHERE id = ?", (int(alert_id),))
+    return cursor.rowcount > 0

@@ -4,6 +4,7 @@ import asyncio
 import json
 import os
 import re
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -16,6 +17,7 @@ from dotenv import load_dotenv
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+from app.agents.marketing_agent import run_marketing_pipeline
 from app.agents.research_agent import run_research_agent
 from app.agents.writer_agent import run_writer_agent
 from app.schemas.guide_schema import GenerateResponse
@@ -60,6 +62,8 @@ JOB_ID = "daily_guide_generation"
 
 _scheduler = AsyncIOScheduler(timezone="Asia/Seoul")
 _run_lock = asyncio.Lock()
+_marketing_guard = threading.Lock()
+_marketing_threads: List[threading.Thread] = []
 _last_run: Optional[Dict[str, Any]] = None
 _batch_running = False
 _batch_city = ""
@@ -296,6 +300,39 @@ async def publish_approved_guide(guide_id: str) -> Dict[str, Any]:
     return published
 
 
+def _run_marketing_quietly(guide_data: Dict[str, Any]) -> None:
+    """채널 실패가 자동 발행 결과를 되돌리지 않게 삼킨다."""
+    try:
+        run_marketing_pipeline(guide_data)
+    except Exception as exc:  # noqa: BLE001 - 홍보 실패는 발행 상태와 분리한다
+        print("⚠️ [Marketing] 자동 발행 파이프라인 실패: {0}".format(exc))
+
+
+def schedule_marketing_pipeline(guide_data: Dict[str, Any]) -> None:
+    """QA 자동 승인 직후 홍보 파이프라인을 백그라운드 스레드에서 시작한다."""
+    worker = threading.Thread(
+        target=_run_marketing_quietly,
+        args=(guide_data,),
+        name="marketing-pipeline",
+        daemon=True,
+    )
+    with _marketing_guard:
+        _marketing_threads.append(worker)
+    worker.start()
+    print("📣 [Marketing] 자동 발행 홍보 파이프라인 시작: {0}".format(guide_data.get("id")))
+
+
+def join_marketing_pipelines(timeout: float = 30.0) -> None:
+    """시작된 홍보 스레드가 초안을 남길 때까지 기다린다."""
+    with _marketing_guard:
+        workers = list(_marketing_threads)
+    for worker in workers:
+        if worker.is_alive():
+            worker.join(timeout)
+    with _marketing_guard:
+        _marketing_threads[:] = [worker for worker in _marketing_threads if worker.is_alive()]
+
+
 async def run_daily_auto_generation() -> Dict[str, Any]:
     """아직 없는 도시 가이드를 만들고, QA 75점 이상이면 승인 후 sitemap을 갱신한다."""
     global _last_run, _batch_running, _batch_city
@@ -322,6 +359,7 @@ async def run_daily_auto_generation() -> Dict[str, Any]:
         finally:
             _batch_running = False
             _batch_city = ""
+            await asyncio.to_thread(join_marketing_pipelines)
 
 
 async def _execute_daily_auto_generation(destination: Optional[str]) -> Dict[str, Any]:
@@ -351,6 +389,7 @@ async def _execute_daily_auto_generation(destination: Optional[str]) -> Dict[str
         qa_result = published_payload["qa_result"]
         seo_ping = published_payload.get("seo_ping")
         file_path = Path(published_payload.get("file_path") or file_path)
+        schedule_marketing_pipeline(published_payload)
     _advance_past(destination)
     _last_run = {
         "status": "ok",

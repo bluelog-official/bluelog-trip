@@ -7,8 +7,9 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.services import guide_service, scheduler_service
+from app.services import guide_service, scheduler_service, stats_service
 from app.services.auth_service import issue_admin_token
+from app.services.marketing_service import save_marketing_alert
 from app.services.scheduler_service import read_daily_batch_status
 
 HIGH_ARTICLE = (
@@ -63,6 +64,8 @@ def test_dashboard_stats_requires_bearer_token(client):
 
 def test_dashboard_stats_counts_approval_gate(client, monkeypatch, tmp_path):
     guides, output, previous_store = _isolate_guides(monkeypatch, tmp_path)
+    monkeypatch.setenv("STATS_DB_PATH", str(tmp_path / "visitor_stats.db"))
+    stats_service.reset_visitor_cache()
     seoul = guides / "seoul_guide.md"
     busan = guides / "busan_guide.md"
     osaka = guides / "osaka_guide.md"
@@ -121,6 +124,7 @@ def test_dashboard_stats_counts_approval_gate(client, monkeypatch, tmp_path):
         assert recent[2]["is_approved"] is True
         assert recent[1]["is_approved"] is False
         assert recent[1]["qa_score"] >= 75
+        assert payload["marketing_alerts"] == []
     finally:
         _restore_store(previous_store)
 
@@ -146,3 +150,48 @@ def test_stale_running_batch_is_reported_as_failed(monkeypatch, tmp_path):
         "status": "FAILED",
         "target_city": "Paris",
     }
+
+
+def test_dashboard_stats_lists_marketing_alerts_and_dismiss(client, monkeypatch, tmp_path):
+    guides, output, previous_store = _isolate_guides(monkeypatch, tmp_path)
+    monkeypatch.setenv("STATS_DB_PATH", str(tmp_path / "visitor_stats.db"))
+    stats_service.reset_visitor_cache()
+    (guides / "kyoto_guide.md").write_text(HIGH_ARTICLE, encoding="utf-8")
+    save_marketing_alert(
+        guide_id="kyoto_guide.md",
+        channel="reddit_draft",
+        title="r/travel: Kyoto walking day",
+        body="## r/travel\n\n**Kyoto walking day**\n",
+    )
+    try:
+        token = issue_admin_token()
+        listed = client.get("/api/v1/admin/dashboard-stats", headers=_auth_header(token))
+        assert listed.status_code == 200, listed.text
+        alerts = listed.json()["marketing_alerts"]
+        assert len(alerts) == 1
+        assert alerts[0]["guide_id"] == "kyoto_guide.md"
+        assert alerts[0]["channel"] == "reddit_draft"
+        assert "r/travel" in alerts[0]["body"]
+        alert_id = alerts[0]["id"]
+
+        missing_auth = client.delete("/api/v1/admin/marketing-alerts/{0}".format(alert_id))
+        assert missing_auth.status_code == 401
+
+        dismissed = client.delete(
+            "/api/v1/admin/marketing-alerts/{0}".format(alert_id),
+            headers=_auth_header(token),
+        )
+        assert dismissed.status_code == 200, dismissed.text
+        assert dismissed.json() == {"ok": True, "id": alert_id}
+
+        again = client.get("/api/v1/admin/dashboard-stats", headers=_auth_header(token))
+        assert again.status_code == 200
+        assert again.json()["marketing_alerts"] == []
+
+        missing = client.delete(
+            "/api/v1/admin/marketing-alerts/999",
+            headers=_auth_header(token),
+        )
+        assert missing.status_code == 404
+    finally:
+        _restore_store(previous_store)

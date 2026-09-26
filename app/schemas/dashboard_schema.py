@@ -26,6 +26,15 @@ class RecentGuide(BaseModel):
     is_approved: bool
 
 
+class MarketingAlertItem(BaseModel):
+    id: int
+    guide_id: str
+    channel: str
+    title: str
+    body: str
+    created_at: str
+
+
 class DashboardStats(BaseModel):
     total_guides_count: int
     approved_count: int
@@ -33,3 +42,4 @@ class DashboardStats(BaseModel):
     daily_batch_status: DailyBatchStatus
     agent_health: AgentHealth
     recent_guides: List[RecentGuide]
+    marketing_alerts: List[MarketingAlertItem] = Field(default_factory=list)

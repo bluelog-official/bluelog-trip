@@ -15,6 +15,7 @@ const EMPTY_STATS = {
     syndication_agent: "OK",
   },
   recent_guides: [],
+  marketing_alerts: [],
 };
 
 const PIPELINE = [
@@ -35,6 +36,8 @@ export default function Dashboard({ onUnauthorized }) {
   const [notice, setNotice] = useState("");
   const [batching, setBatching] = useState(false);
   const [approvingId, setApprovingId] = useState("");
+  const [copiedId, setCopiedId] = useState(null);
+  const [dismissingId, setDismissingId] = useState(null);
   const onUnauthorizedRef = useRef(onUnauthorized);
   onUnauthorizedRef.current = onUnauthorized;
 
@@ -145,9 +148,73 @@ export default function Dashboard({ onUnauthorized }) {
     }
   };
 
+  const copyDraft = async (alert) => {
+    const text = alert.body || "";
+    setError("");
+    const copyWithTextarea = () => {
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.setAttribute("readonly", "");
+      area.style.position = "fixed";
+      area.style.top = "0";
+      area.style.left = "0";
+      area.style.opacity = "0";
+      document.body.appendChild(area);
+      area.focus();
+      area.select();
+      const copied = document.execCommand("copy");
+      document.body.removeChild(area);
+      return copied;
+    };
+    try {
+      if (!copyWithTextarea()) {
+        if (!navigator.clipboard) throw new Error("copy failed");
+        const write = navigator.clipboard.writeText(text);
+        const timeout = new Promise((_, reject) => {
+          window.setTimeout(() => reject(new Error("copy failed")), 800);
+        });
+        await Promise.race([write, timeout]);
+      }
+      setCopiedId(alert.id);
+      window.setTimeout(() => {
+        setCopiedId((current) => (current === alert.id ? null : current));
+      }, 2000);
+    } catch {
+      setError("클립보드에 복사하지 못했습니다.");
+    }
+  };
+
+  const dismissAlert = async (alertId) => {
+    if (dismissingId) return;
+    setDismissingId(alertId);
+    setError("");
+    try {
+      const res = await fetch(`${API_BASE_URL}/admin/marketing-alerts/${alertId}`, {
+        method: "DELETE",
+        headers: adminAuthHeaders(),
+      });
+      if (res.status === 401) {
+        onUnauthorizedRef.current();
+        return;
+      }
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}));
+        throw new Error(payload.detail || "마케팅 알림을 지우지 못했습니다.");
+      }
+      setNotice("마케팅 초안을 확인 완료로 처리했습니다.");
+      const data = await loadStats();
+      setStats(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setDismissingId(null);
+    }
+  };
+
   const batch = stats.daily_batch_status || EMPTY_STATS.daily_batch_status;
   const health = stats.agent_health || EMPTY_STATS.agent_health;
   const guides = stats.recent_guides || [];
+  const alerts = stats.marketing_alerts || [];
 
   return (
     <section className="dash">
@@ -250,6 +317,44 @@ export default function Dashboard({ onUnauthorized }) {
             )}
           </tbody>
         </table>
+      </section>
+
+      <section className="marketing-panel" aria-label="Marketing Alerts (Reddit Drafts)">
+        <h2>Marketing Alerts (Reddit Drafts)</h2>
+        {alerts.length === 0 ? (
+          <p className="marketing-empty">{loading ? "불러오는 중..." : "저장된 Reddit 초안이 없습니다."}</p>
+        ) : (
+          <ul className="marketing-list">
+            {alerts.map((alert) => (
+              <li key={alert.id} className="marketing-card">
+                <header>
+                  <div>
+                    <strong>{alert.title || alert.guide_id}</strong>
+                    <small>
+                      {alert.guide_id}
+                      {" · "}
+                      {alert.created_at}
+                    </small>
+                  </div>
+                  <div className="marketing-actions">
+                    <button type="button" className="alert-copy" onClick={() => copyDraft(alert)}>
+                      {copiedId === alert.id ? "Copied" : "Copy to Clipboard"}
+                    </button>
+                    <button
+                      type="button"
+                      className="alert-dismiss"
+                      disabled={dismissingId === alert.id}
+                      onClick={() => dismissAlert(alert.id)}
+                    >
+                      {dismissingId === alert.id ? "처리 중..." : "Dismiss (확인 완료)"}
+                    </button>
+                  </div>
+                </header>
+                <pre className="alert-body">{alert.body}</pre>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </section>
   );

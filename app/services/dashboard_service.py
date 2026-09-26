@@ -3,6 +3,7 @@
 from typing import Any, Dict
 
 from app.services.guide_service import _MIN_APPROVED_SCORE, list_guide_records
+from app.services.marketing_service import list_marketing_alerts
 from app.services.scheduler_service import read_daily_batch_status
 
 _AGENT_MODULES = (
@@ -44,4 +45,5 @@ def build_dashboard_stats() -> Dict[str, Any]:
         "daily_batch_status": read_daily_batch_status(),
         "agent_health": agent_health(),
         "recent_guides": guides[:10],
+        "marketing_alerts": list_marketing_alerts(limit=20),
     }
