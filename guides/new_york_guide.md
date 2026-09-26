@@ -2,7 +2,7 @@
 title: "New York in Four Days: Manhattan on Foot, Brooklyn Once"
 date: "2026-09-25"
 city: "New York"
-status: "Checked by Local AI"
+status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/8569166/pexels-photo-8569166.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
 ---
 

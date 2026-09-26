@@ -2,7 +2,7 @@
 title: "Singapore in Four Days: Hawker Centers, Gardens, and One Neighborhood"
 date: "2026-09-25"
 city: "Singapore"
-status: "Checked by Local AI"
+status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/18662417/pexels-photo-18662417.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
 ---
 

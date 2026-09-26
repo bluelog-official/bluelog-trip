@@ -2,7 +2,7 @@
 title: "Tokyo in Four Days: Trains, Neighborhoods, and Where to Eat"
 date: "2026-09-25"
 city: "Tokyo"
-status: "Checked by Local AI"
+status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/30944529/pexels-photo-30944529.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
 ---
 

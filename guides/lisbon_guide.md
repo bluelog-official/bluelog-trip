@@ -2,7 +2,7 @@
 title: "Lisbon in Four Days"
 date: "2026-09-25"
 city: "Lisbon"
-status: "Checked by Local AI"
+status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/33659330/pexels-photo-33659330.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
 ---
 # Lisbon Travel Guide: A First-Timer’s 3-Night, 4-Day Trip

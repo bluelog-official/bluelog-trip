@@ -24,7 +24,7 @@ Loaded from the project ``.env`` when the variables are not already set.
     PEXELS_API_KEY                      hero photograph
     SITE_URL                            optional public site origin
 
-The default review status written into frontmatter is ``Checked by Local AI``.
+The default review status written into frontmatter is ``Verified Travel Guide``.
 """
 
 import argparse
@@ -39,7 +39,7 @@ from dotenv import load_dotenv
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 GUIDES_DIR = ROOT_DIR / "guides"
-DEFAULT_STATUS = "Checked by Local AI"
+DEFAULT_STATUS = "Verified Travel Guide"
 
 GEMINI_MODELS = (
     "gemini-3.6-flash",

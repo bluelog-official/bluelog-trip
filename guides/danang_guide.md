@@ -2,7 +2,7 @@
 title: "Da Nang in Four Days: The Beach, the Marble Mountains, and Hoi An"
 date: "2026-09-25"
 city: "Danang"
-status: "Checked by Local AI"
+status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/26550067/pexels-photo-26550067.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
 ---
 

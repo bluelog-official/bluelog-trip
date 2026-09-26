@@ -2,7 +2,7 @@
 title: "Rome in Four Days: Ancient Core, Vatican Morning, Trastevere Night"
 date: "2026-09-25"
 city: "Rome"
-status: "Checked by Local AI"
+status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/17282659/pexels-photo-17282659.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
 ---
 

@@ -2,7 +2,7 @@
 title: "Prague in Four Days"
 date: "2026-09-26"
 city: "Prague"
-status: "Checked by Local AI"
+status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/16309117/pexels-photo-16309117.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
 ---
 # Prague Uncovered: A 3-Night, 4-Day Trip Guide

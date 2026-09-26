@@ -2,7 +2,7 @@
 title: "Bangkok in Four Days: The River, One Market, and Chinatown at Night"
 date: "2026-09-25"
 city: "Bangkok"
-status: "Checked by Local AI"
+status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/13022780/pexels-photo-13022780.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
 ---
 

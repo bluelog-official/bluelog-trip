@@ -2,7 +2,7 @@
 title: "Osaka in Four Days: Street Food, the Castle, and a Market Morning"
 date: "2026-09-25"
 city: "Osaka"
-status: "Checked by Local AI"
+status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/37943715/pexels-photo-37943715.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
 ---
 

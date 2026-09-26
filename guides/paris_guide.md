@@ -2,7 +2,7 @@
 title: "Paris in Four Days: A Walkable Left-and-Right Bank Route"
 date: "2026-09-25"
 city: "Paris"
-status: "Checked by Local AI"
+status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/16823627/pexels-photo-16823627.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
 ---
 

@@ -18,7 +18,7 @@ const HANGUL = /[\u1100-\u11FF\u3130-\u318F\uAC00-\uD7A3]/;
 const BRANDS = [
   "BlueLog Trip",
   "BlueLog Desk",
-  "BlueLog Local AI",
+  "BlueLog Editorial",
   "BlueLog",
   "Google AdSense",
   "Google",

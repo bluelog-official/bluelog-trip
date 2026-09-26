@@ -2,7 +2,7 @@
 title: "Taipei in Four Days: Night Markets, a Museum, and a Mountain Town"
 date: "2026-09-25"
 city: "Taipei"
-status: "Checked by Local AI"
+status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/35398727/pexels-photo-35398727.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
 ---
 

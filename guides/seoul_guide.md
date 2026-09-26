@@ -2,7 +2,7 @@
 title: "Seoul in Four Days: Palaces, a Market, and the River at Night"
 date: "2026-09-25"
 city: "Seoul"
-status: "Checked by Local AI"
+status: "Verified Travel Guide"
 image_url: "https://images.pexels.com/photos/39414394/pexels-photo-39414394.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
 ---
 

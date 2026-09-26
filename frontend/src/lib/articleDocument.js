@@ -219,7 +219,7 @@ export function buildGuideJsonLd({
     inLanguage,
     author: {
       "@type": "Organization",
-      name: "BlueLog Local AI",
+      name: "BlueLog Editorial",
     },
     publisher: {
       "@type": "Organization",
