@@ -36,6 +36,9 @@ function sitemapUrl({ loc, lastmod, changefreq, priority }) {
 function buildStaticSitemap(siteUrl) {
   const origin = String(siteUrl || DEFAULT_SITE_URL).replace(/\/$/, "") || DEFAULT_SITE_URL;
   const entries = [sitemapUrl({ loc: `${origin}/`, changefreq: "daily", priority: "1.0" })];
+  for (const publicPath of ["/about", "/contact", "/privacy", "/terms"]) {
+    entries.push(sitemapUrl({ loc: `${origin}${publicPath}`, changefreq: "monthly", priority: "0.4" }));
+  }
   if (fs.existsSync(GUIDES_DIR)) {
     const names = fs
       .readdirSync(GUIDES_DIR)

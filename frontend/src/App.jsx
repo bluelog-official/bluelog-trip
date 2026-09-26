@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import Footer from "./components/Footer";
 import VisitorBadge from "./components/VisitorBadge";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 import Dashboard from "./pages/Dashboard";
+import NotFound from "./pages/NotFound";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 import AdSenseUnit from "./components/AdSenseUnit";
 import AdminDrawer from "./components/portal/AdminDrawer";
 import AdminLogin from "./components/portal/AdminLogin";
@@ -58,7 +63,6 @@ export default function App() {
   const [publishing, setPublishing] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
   const [posts, setPosts] = useState(() => loadCommunityPosts());
-  const [policyId, setPolicyId] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -174,9 +178,21 @@ export default function App() {
       food: "Local Food · BlueLog Trip",
       community: "Community & Viral Log · BlueLog Trip",
       dashboard: "Dashboard · BlueLog Trip",
+      privacy: "Privacy Policy · BlueLog Trip",
+      terms: "Terms of Service · BlueLog Trip",
+      about: "About · BlueLog Trip",
+      contact: "Contact · BlueLog Trip",
+      notFound: "Page not found · BlueLog Trip",
+    };
+    const descriptions = {
+      privacy: "How BlueLog Trip uses cookies, Google AdSense, third-party cookies, and the DART cookie.",
+      terms: "Terms of Service for reading and using BlueLog Trip city guides.",
+      about: "BlueLog Trip writes AI-assisted local city guides and checks them before publication.",
+      contact: "Contact BlueLog Trip at bluelog.official@gmail.com.",
+      notFound: "This page is not on BlueLog Trip. Return to the homepage.",
     };
     document.title = titles[route.name] || "BlueLog Trip - Curated Local City Guides";
-    setMetaDescription(copy.siteDescription);
+    setMetaDescription(descriptions[route.name] || copy.siteDescription);
   }, [route, cards, language]);
 
   const localizedCards = useMemo(
@@ -333,6 +349,16 @@ export default function App() {
             onCreate={handleCreatePost}
             language={language}
           />
+        ) : route.name === "privacy" ? (
+          <PrivacyPolicy />
+        ) : route.name === "terms" ? (
+          <TermsOfService />
+        ) : route.name === "about" ? (
+          <About />
+        ) : route.name === "contact" ? (
+          <Contact />
+        ) : route.name === "notFound" ? (
+          <NotFound onNavigate={go} />
         ) : (
           <div className={showSidebar ? "portal-body" : "portal-body solo"}>
             <div className="portal-stream">
@@ -382,12 +408,7 @@ export default function App() {
       </main>
 
       <VisitorBadge />
-      <Footer
-        onNavigate={go}
-        policyId={policyId}
-        onOpenPolicy={setPolicyId}
-        onClosePolicy={() => setPolicyId("")}
-      />
+      <Footer onNavigate={go} />
 
       {adminMode ? (
         <AdminDrawer

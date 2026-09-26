@@ -51,6 +51,7 @@ ROOT_DIR = Path(__file__).resolve().parents[2]
 OUTPUT_DIR = ROOT_DIR / "output"
 GUIDES_DIR = ROOT_DIR / "guides"
 SITEMAP_PATH = OUTPUT_DIR / "sitemap.xml"
+PUBLIC_SITEMAP_PATHS = ("/about", "/contact", "/privacy", "/terms")
 STATE_PATH = OUTPUT_DIR / "scheduler_state.json"
 GOOGLE_SITEMAP_PING = "http://www.google.com/ping"
 _SCRIPT_TAG = re.compile(
@@ -237,6 +238,9 @@ def refresh_sitemap(base_url: str = "") -> Path:
     site_url = resolve_site_base_url(base_url)
     home = "{0}/".format(site_url) if site_url else "/"
     entries = [_sitemap_url(home, changefreq="daily", priority="1.0")]
+    for public_path in PUBLIC_SITEMAP_PATHS:
+        loc = "{0}{1}".format(site_url, public_path) if site_url else public_path
+        entries.append(_sitemap_url(loc, changefreq="monthly", priority="0.4"))
     for path in _sitemap_sources():
         lastmod = datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc).date().isoformat()
         loc = "{0}/guide/{1}".format(site_url, path.name) if site_url else "/guide/{0}".format(path.name)

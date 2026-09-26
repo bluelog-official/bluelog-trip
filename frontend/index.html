@@ -6,6 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BlueLog Trip - Curated Local City Guides</title>
     <meta name="description" content="BlueLog Trip - Curated Local City Guides" />
+    <!-- AdSense account meta and adsbygoogle.js are filled only when VITE_ADSENSE_CLIENT_ID is set at build time. -->
+    <meta name="google-adsense-account" content="%VITE_ADSENSE_CLIENT_ID%" data-adsense-meta="pending" />
+    <script>
+      (function () {
+        var meta = document.querySelector('meta[name="google-adsense-account"]');
+        var client = meta ? String(meta.getAttribute("content") || "").trim() : "";
+        var missing = !client || client.charAt(0) === "%" || client.indexOf("VITE_") !== -1;
+        if (missing) {
+          if (meta && meta.parentNode) meta.parentNode.removeChild(meta);
+          return;
+        }
+        if (meta) meta.removeAttribute("data-adsense-meta");
+        var script = document.createElement("script");
+        script.async = true;
+        script.src =
+          "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" +
+          encodeURIComponent(client);
+        script.crossOrigin = "anonymous";
+        document.head.appendChild(script);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

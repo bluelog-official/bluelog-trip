@@ -50,7 +50,19 @@ export function parseRoute(pathname) {
   if (path === "/community") {
     return { name: "community", category: "community", guideId: "" };
   }
-  return { name: "home", category: "home", guideId: "" };
+  if (path === "/") {
+    return { name: "home", category: "home", guideId: "" };
+  }
+  const staticPages = {
+    "/privacy": "privacy",
+    "/terms": "terms",
+    "/about": "about",
+    "/contact": "contact",
+  };
+  if (staticPages[path]) {
+    return { name: staticPages[path], category: "", guideId: "" };
+  }
+  return { name: "notFound", category: "", guideId: "" };
 }
 
 function stripLegacyAdminQuery() {
