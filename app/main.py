@@ -24,7 +24,7 @@ from app.services.scheduler_service import (
 
 load_dotenv()
 
-DEFAULT_SITE_URL = "https://bluelog.travel"
+DEFAULT_SITE_URL = "[https://bluelogtrip.com](https://bluelogtrip.com)"
 SITE_URL = os.getenv("SITE_URL", DEFAULT_SITE_URL).strip().rstrip("/") or DEFAULT_SITE_URL
 VERCEL_ORIGIN_REGEX = r"https://[a-zA-Z0-9-]+\.vercel\.app"
 
@@ -48,7 +48,8 @@ def _cors_allow_origins(site_url: str) -> List[str]:
         "http://127.0.0.1:5173",
         _origin(site_url),
         _origin(DEFAULT_SITE_URL),
-        "https://www.bluelog.travel",
+        "https://bluelogtrip.com",
+        "https://www.bluelogtrip.com",
     ]
     parsed = urlparse(_origin(site_url))
     host = (parsed.hostname or "").lower()
