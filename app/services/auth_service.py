@@ -4,6 +4,7 @@ import hashlib
 import hmac
 import json
 import os
+import secrets
 import time
 from base64 import urlsafe_b64decode, urlsafe_b64encode
 from binascii import Error as BinasciiError
@@ -27,7 +28,7 @@ def _digest(value: str) -> bytes:
 
 
 def _matches(provided: str, expected: str) -> bool:
-    return hmac.compare_digest(_digest(provided), _digest(expected))
+    return secrets.compare_digest(_digest(provided), _digest(expected))
 
 
 def _signing_key() -> bytes:

@@ -1,6 +1,8 @@
 """FastAPI 컨트롤러: 라우팅과 HTTP 예외 처리만 담당한다."""
 
+import hashlib
 import os
+import secrets
 from contextlib import asynccontextmanager
 from typing import Any, Dict, List, Optional
 from urllib.parse import urlparse
@@ -12,7 +14,7 @@ from fastapi.responses import Response
 
 from app.schemas.auth_schema import AdminLoginRequest, AdminLoginResponse
 from app.schemas.guide_schema import GenerateRequest, GenerateResponse
-from app.services.auth_service import authenticate_admin, authorization_is_valid
+from app.services.auth_service import admin_password, authenticate_admin, authorization_is_valid
 from app.services.guide_service import get_guide, list_guides
 from app.services.scheduler_service import (
     generate_city_guide,
@@ -85,6 +87,20 @@ app.add_middleware(
 )
 
 
+def _passwords_match(provided: str, expected: str) -> bool:
+    """같은 길이의 SHA-256 다이제스트를 상수 시간에 비교한다."""
+    left = hashlib.sha256((provided or "").encode("utf-8")).digest()
+    right = hashlib.sha256((expected or "").encode("utf-8")).digest()
+    return secrets.compare_digest(left, right)
+
+
+def _configured_admin_password() -> str:
+    configured = os.getenv("ADMIN_PASSWORD")
+    if configured:
+        return configured
+    return admin_password()
+
+
 def require_admin(authorization: Optional[str] = Header(default=None)) -> None:
     """Authorization: Bearer 토큰이 없거나 유효하지 않으면 401을 반환한다."""
     if not authorization_is_valid(authorization or ""):
@@ -97,8 +113,10 @@ def require_admin(authorization: Optional[str] = Header(default=None)) -> None:
 
 @app.post("/api/v1/admin/login", response_model=AdminLoginResponse)
 async def admin_login(body: AdminLoginRequest) -> AdminLoginResponse:
+    expected_password = _configured_admin_password()
+    password_ok = _passwords_match(body.password, expected_password)
     token = authenticate_admin(body.username, body.password)
-    if not token:
+    if not password_ok or not token:
         raise HTTPException(status_code=401, detail="잘못된 관리자 정보입니다")
     return AdminLoginResponse(access_token=token)
 
