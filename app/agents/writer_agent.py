@@ -12,11 +12,16 @@ from app.services.keyword_map import format_keyword_context, resolve_city_keywor
 
 SYSTEM_PROMPT = (
     "당신은 구글 애드센스 수익화에 최적화된 한국어 여행 블로그를 쓰는 전문 작가입니다. "
-    "JSON이 아닌 순수 마크다운 본문만 반환하세요."
+    "JSON이 아닌 순수 마크다운 본문만 반환하세요. "
+    "Strictly generate 100% pure target language without mixing foreign phrases. "
+    "본문, 제목, 표는 100% 한국어만 사용하고 영어 문장이나 외국어 괄호 설명을 섞지 마세요."
 )
 ENGLISH_SYSTEM_PROMPT = (
     "You write AdSense-ready English travel articles for a global audience. "
-    "Return markdown only, with no JSON and no code fences."
+    "Return markdown only, with no JSON and no code fences. "
+    "Strictly generate 100% pure target language without mixing foreign phrases. "
+    "The article must be 100% English. Never insert Korean words, Hangul characters, "
+    "or parenthetical Korean explanations."
 )
 
 
@@ -43,9 +48,10 @@ def _build_english_writer_prompt(
     keyword_rule = ""
     if keyword_block:
         keyword_rule = (
-            "7. Use the Primary Keyword naturally in one H2. "
-            "Spread the Long-tail Keywords through the body. "
-            "Prefer Local Food/Spot names in the meal table.\n"
+            "7. Express the Primary Keyword as one natural English H2. "
+            "Spread the ideas behind the Long-tail Keywords through the body in English only. "
+            "Prefer Local Food/Spot names in the meal table, written in English. "
+            "Never copy Korean or other foreign keyword text into the article.\n"
         )
     return """
     You write AdSense-ready travel guides for a global audience.
@@ -68,7 +74,8 @@ def _build_english_writer_prompt(
     4. Put the local tip where a reader will actually see it.
     5. Write at least 1,500 characters in a natural expert English travel-blog voice.
     6. Output markdown only, with no code blocks and no JSON.
-    {keyword_rule}8. Write the full article in natural English for global readers. Headings, table labels, and prose must be English. Keep the provided keyword phrases recognizable in the copy.
+    {keyword_rule}8. Write the full article in natural English for global readers. Headings, table labels, and prose must be English. Translate any non-English research note or keyword into English, and do not keep the original foreign wording.
+    9. Strictly generate 100% pure target language without mixing foreign phrases. Every heading, table label, and sentence must stay in English. Never insert Korean words, Hangul, or parenthetical Korean explanations such as "도쿄 여행 필수 라멘 투어".
     """.format(
         destination=destination,
         attractions=", ".join(research.attractions),
@@ -122,7 +129,7 @@ def build_writer_prompt(
     4. 리서치 데이터에 있는 '로컬 팁'을 잘 보이는 곳에 강조하여 작성하세요.
     {style_rule}
     6. 코드 블록이나 JSON 없이 마크다운 본문만 출력하세요.
-    {keyword_rule}
+    {keyword_rule}8. Strictly generate 100% pure target language without mixing foreign phrases. 제목, 표, 본문은 100% 한국어로만 작성하고 영어 문장이나 외국어 괄호 설명을 넣지 마세요.
     """.format(
         destination=destination,
         attractions=", ".join(research.attractions),

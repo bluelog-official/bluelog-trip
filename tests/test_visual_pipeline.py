@@ -163,3 +163,5 @@ def test_english_syndication_matches_writing_language():
 
     prompt = build_writer_prompt("Rome", research, target_language="en")
     assert "natural English" in prompt
+    assert "Strictly generate 100% pure target language without mixing foreign phrases" in prompt
+    assert "도쿄 여행 필수 라멘 투어" in prompt

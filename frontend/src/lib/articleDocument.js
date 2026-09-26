@@ -1,5 +1,6 @@
 const IMAGE_LINE = /!\[[^\]]*\]\((https?:[^)\s]+)\)/;
 const PHOTO_LINE = /^\*Photo by (?:\[([^\]]+)\]\(([^)]+)\)|([^*\n]+))\*$/;
+const PHOTO_CREDIT_LINE = /^\s*(?:[*_]{1,2})?\s*photo by\b.*$/i;
 const HEADING_LINE = /^(#{2,3})\s+(.+)$/;
 const MISSING_GUIDE = /데이터를 찾을 수 없습니다/;
 const HANGUL = /[\u1100-\u11FF\u3130-\u318F\uAC00-\uD7A3]/;
@@ -73,6 +74,14 @@ export function extractSources(markdown) {
     add("Pexels", "https://www.pexels.com");
   }
   return sources;
+}
+
+export function stripPhotoCredits(markdown) {
+  return String(markdown || "")
+    .split(/\r?\n/)
+    .filter((line) => !PHOTO_CREDIT_LINE.test(line.trim()))
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n");
 }
 
 export function stripFrontmatter(markdown) {
@@ -176,7 +185,8 @@ export function prepareArticle(markdown, languageEnglish, destination) {
     ? `## ${destination || "Destination"} Trip Guide\n\nThis guide is not available yet.`
     : source;
   const localized = languageEnglish ? localizeEnglishMarkdown(readable) : readable;
-  const stripped = stripLeadingImage(localized);
+  const withoutCredits = stripPhotoCredits(localized);
+  const stripped = stripLeadingImage(withoutCredits);
   const split = splitMarkdown(stripped.markdown);
   const seen = new Map();
   const beforeHeadings = extractHeadings(split.before, seen);

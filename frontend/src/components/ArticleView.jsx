@@ -1,6 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { slugifyHeading } from "../lib/articleDocument";
+import { slugifyHeading, stripPhotoCredits } from "../lib/articleDocument";
 import { buildArticleBlocks } from "./adSlotPlan";
 import AdSenseUnit from "./AdSenseUnit";
 
@@ -32,7 +32,7 @@ export default function ArticleView({
   headingIds = null,
   plain = false,
 }) {
-  const blocks = buildArticleBlocks(markdown, isApproved === true);
+  const blocks = buildArticleBlocks(stripPhotoCredits(markdown), isApproved === true);
   const components = {
     h2: headingComponent("h2", headingIds),
     h3: headingComponent("h3", headingIds),
