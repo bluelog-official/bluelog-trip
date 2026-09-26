@@ -700,6 +700,20 @@
   margin-bottom: 8px;
 }
 
+.visitor-badge-row {
+  max-width: 1180px;
+  margin: 18px auto 0;
+  padding: 0 20px;
+}
+
+.visitor-badge {
+  margin: 0;
+  color: #78716c;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
 .portal-footer {
   margin: 28px 0 0;
   padding: 40px 20px 32px;

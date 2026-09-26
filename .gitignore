@@ -2,3 +2,5 @@
 .env.local
 .env.production
 !frontend/.env.production
+output/visitor_stats.db
+output/visitor_stats.db-*

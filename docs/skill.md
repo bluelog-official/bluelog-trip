@@ -130,7 +130,24 @@ class GenerateResponse(BaseModel):
 | GET | `/api/v1/sitemap.xml` | 승인된 가이드만 포함한 sitemap |
 | GET | `/api/v1/guides` | 생성된 가이드 목록 |
 | GET | `/api/v1/guides/{guide_id}` | 가이드 상세. 승인 전에는 `qa_result.is_approved`가 false |
-| POST | `/api/v1/guides/{guide_id}/approve` | 휴먼 리뷰 승인. `is_approved`를 true로 바꾸고 sitemap 갱신 후 Google ping |
+| POST | `/api/v1/guides/{guide_id}/approve` | 휴먼 리뷰 승인. `is_approved`를 true로 바꾸고 sitemap 갱신 후 Google ping. 응답 후 Marketing Agent를 Background Task로 실행 |
 | GET | `/api/v1/admin/dashboard-stats` | Bearer 필수. 가이드 수, QA 75점 승인/보류, 배치 상태, 에이전트 헬스, 최근 10개 |
+| GET | `/api/v1/stats/visitors` | 오늘(Asia/Seoul) 순 방문자와 누적 순 방문자 |
+| POST | `/api/v1/stats/hit` | 방문 1회 기록. 같은 IP 해시는 하루에 한 번만 집계 |
 
 `/guides`, `/guides/{guide_id}`는 프론트엔드 호환용 동일 라우트다.
+
+## 7. Visitor Stats
+
+- **Schema:** `app/schemas/stats_schema.py` — `VisitorStats`, `VisitorHit`
+- **Table:** `app/models/daily_stats.py` — `daily_stats(stat_date, visitor_count)`, 중복 방지용 `visitor_seen(stat_date, ip_hash)`
+- **Service:** `app/services/stats_service.py` — `record_hit(ip)`, `visitor_counts()`. 원본 IP는 저장하지 않는다.
+- **Router:** `app/routers/stats.py`
+- DB 파일 기본 경로는 `output/visitor_stats.db`. 테스트는 `STATS_DB_PATH`로 바꾼다.
+
+## 8. Marketing Agent (`app/agents/marketing_agent.py`)
+
+- **Trigger:** `POST /api/v1/guides/{guide_id}/approve`가 게시에 성공한 뒤 `run_marketing_pipeline(guide_data)`를 Background Task로 실행한다.
+- `post_to_pinterest(guide_data)`: Pins API 형태의 `title`, `description`, `alt_text`, `link`, `media_source`를 만든다. 전송은 하지 않는다.
+- `send_discord_webhook(guide_data)`: `DISCORD_WEBHOOK_URL`이 있으면 `requests.post`로 발행 알림을 보낸다. 없으면 건너뛴다.
+- `draft_reddit_post(guide_data)`: Reddit에는 올리지 않고 r/travel 등 마크다운 초안을 `marketing_alerts` 테이블에 관리자 알림으로 저장한다.

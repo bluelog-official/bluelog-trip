@@ -8,10 +8,12 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import urlparse
 
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, Header, HTTPException, Request
+from fastapi import BackgroundTasks, Depends, FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 
+from app.agents.marketing_agent import run_marketing_pipeline
+from app.routers.stats import router as stats_router
 from app.schemas.auth_schema import AdminLoginRequest, AdminLoginResponse
 from app.schemas.dashboard_schema import DashboardStats
 from app.schemas.guide_schema import GenerateRequest, GenerateResponse
@@ -78,6 +80,8 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(title="BlueLog AdSense Engine - AI Agents", lifespan=lifespan)
+
+app.include_router(stats_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -189,14 +193,16 @@ async def get_guide_detail(guide_id: str) -> Dict[str, Any]:
 
 
 @app.post("/api/v1/guides/{guide_id}/approve", dependencies=[Depends(require_admin)])
-async def approve_guide(guide_id: str) -> Dict[str, Any]:
+async def approve_guide(guide_id: str, background_tasks: BackgroundTasks) -> Dict[str, Any]:
     try:
-        return await publish_approved_guide(guide_id)
+        published = await publish_approved_guide(guide_id)
     except LookupError:
         raise HTTPException(status_code=404, detail="가이드를 찾을 수 없습니다.")
     except Exception as exc:  # noqa: BLE001 - 게시 실패를 HTTP 오류로 변환
         print("❌ [오류] 가이드 승인 실패: {0}".format(exc))
         raise HTTPException(status_code=500, detail="가이드 승인 중 오류 발생: {0}".format(exc))
+    background_tasks.add_task(run_marketing_pipeline, published)
+    return published
 
 
 @app.get("/guides")

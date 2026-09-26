@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Footer from "./components/Footer";
+import VisitorBadge from "./components/VisitorBadge";
 import Dashboard from "./pages/Dashboard";
 import AdSenseUnit from "./components/AdSenseUnit";
 import AdminDrawer from "./components/portal/AdminDrawer";
@@ -380,6 +381,7 @@ export default function App() {
         )}
       </main>
 
+      <VisitorBadge />
       <Footer
         onNavigate={go}
         policyId={policyId}
