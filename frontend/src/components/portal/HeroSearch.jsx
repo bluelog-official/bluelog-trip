@@ -3,8 +3,8 @@ import { Search } from "lucide-react";
 export default function HeroSearch({ query, onQueryChange, onSearch }) {
   return (
     <section className="hero">
-      <p className="hero-kicker">Global travel desk</p>
-      <h1 className="hero-title">Find Local Travel & Food Guides</h1>
+      <p className="hero-kicker">Global trip desk</p>
+      <h1 className="hero-title">Find Local Trip & Food Guides</h1>
       <p className="hero-copy">
         City routes, neighborhood meals, and guides that passed QA before they go live.
       </p>
@@ -15,7 +15,7 @@ export default function HeroSearch({ query, onQueryChange, onSearch }) {
           value={query}
           onChange={(event) => onQueryChange(event.target.value)}
           placeholder="Try Paris, ramen, Bali…"
-          aria-label="Find Local Travel & Food Guides"
+          aria-label="Find Local Trip & Food Guides"
         />
         <button type="submit">Search</button>
       </form>

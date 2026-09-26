@@ -132,8 +132,8 @@ export function toGuideCard(summary, detail) {
   const rawMarkdown = detail?.content || detail?.article_markdown || "";
   const markdown = stripFrontmatter(rawMarkdown);
   const destination = titleCase(id.replace(/_guide\.md$/i, "").replace(/_/g, " "));
-  const title = frontmatterValue(rawMarkdown, "title") || firstHeading(markdown) || `${destination} Travel Guide`;
-  const summaryText = firstParagraph(markdown) || `Local travel notes for ${destination}.`;
+  const title = frontmatterValue(rawMarkdown, "title") || firstHeading(markdown) || `${destination} Trip Guide`;
+  const summaryText = firstParagraph(markdown) || `Local trip notes for ${destination}.`;
   const region = classifyRegion(`${destination} ${id}`);
   const hasFood = FOOD_PATTERN.test(`${title}\n${markdown.slice(0, 4000)}`);
   const score = Number(detail?.qa_result?.quality_score ?? summary?.quality_score ?? 0) || 0;

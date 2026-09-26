@@ -58,7 +58,7 @@ export default function GlobalNav({
       <div className="gnb-inner">
         <button type="button" className="logo" onClick={() => visit("/")}>
           <Compass size={22} aria-hidden="true" />
-          <span>BlueLog Travel Engine</span>
+          <span>BlueLog Trip</span>
         </button>
 
         <button

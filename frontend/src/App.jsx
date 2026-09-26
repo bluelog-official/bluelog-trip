@@ -146,17 +146,17 @@ export default function App() {
       language,
     );
     if (route.name === "article") {
-      document.title = `${card?.title || "Guide"} · BlueLog Travel Engine`;
+      document.title = `${card?.title || "Guide"} · BlueLog Trip`;
       setMetaDescription(card?.summary || copy.siteDescription);
       return;
     }
     const titles = {
-      home: "BlueLog Travel Engine",
-      destinations: "Destinations · BlueLog Travel Engine",
-      food: "Local Food · BlueLog Travel Engine",
-      community: "Community & Viral Log · BlueLog Travel Engine",
+      home: "BlueLog Trip - Curated Local City Guides",
+      destinations: "Destinations · BlueLog Trip",
+      food: "Local Food · BlueLog Trip",
+      community: "Community & Viral Log · BlueLog Trip",
     };
-    document.title = titles[route.name] || "BlueLog Travel Engine";
+    document.title = titles[route.name] || "BlueLog Trip - Curated Local City Guides";
     setMetaDescription(copy.siteDescription);
   }, [route, cards, language]);
 

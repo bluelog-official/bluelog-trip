@@ -24,8 +24,8 @@ export function strictEnglishText(text, fallback, minLength = 1) {
 export function presentGuideCard(card, language) {
   if (!card || !isEnglishLanguage(language)) return card;
   const destination = englishField(card.destination, "Destination");
-  const title = englishField(card.title, `${destination} Travel Guide`);
-  const summary = englishField(card.summary, `Local travel notes for ${destination}.`);
+  const title = englishField(card.title, `${destination} Trip Guide`);
+  const summary = englishField(card.summary, `Local trip notes for ${destination}.`);
   const tags = [];
   (card.tags || []).forEach((tag) => {
     const next = englishField(tag, "");
@@ -69,7 +69,7 @@ const EN = {
   loadingGuide: "Loading this guide…",
   missingGuide: "This guide is not available yet.",
   home: "Home",
-  siteDescription: "City routes, neighborhood meals, and travel guides from BlueLog Travel Engine.",
+  siteDescription: "BlueLog Trip - Curated Local City Guides",
   statusReady: "Guide created.",
   statusReadyScore: (score) => `Guide created. QA score: ${score}.`,
   statusFailed: (message) => `Could not create the guide. ${message}`,
@@ -113,7 +113,7 @@ const KO = {
   loadingGuide: "Loading this guide…",
   missingGuide: "데이터를 찾을 수 없습니다.",
   home: "홈",
-  siteDescription: "BlueLog Travel Engine의 도시 동선과 동네 맛집 가이드.",
+  siteDescription: "BlueLog Trip - Curated Local City Guides",
   statusReady: "생성 완료!",
   statusReadyScore: (score) => `생성 완료! (QA 점수: ${score}점)`,
   statusFailed: (message) => `오류 발생: ${message}`,

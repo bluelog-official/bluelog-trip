@@ -9,7 +9,7 @@ const POLICIES = {
       {
         heading: "Who we are",
         paragraphs: [
-          "BlueLog Travel Engine publishes city routes, neighborhood food notes, and community travel logs. This policy explains what information the site collects and how advertising partners, including Google, may use cookies.",
+          "BlueLog Trip publishes city routes, neighborhood food notes, and community trip logs. This policy explains what information the site collects and how advertising partners, including Google, may use cookies.",
         ],
       },
       {
@@ -49,7 +49,7 @@ const POLICIES = {
       {
         heading: "Using the site",
         paragraphs: [
-          "BlueLog Travel Engine provides travel writing for general information. Guides are not a booking service, a tour operator, or professional safety, medical, or legal advice. Routes, prices, hours, and local rules change. Confirm details with the venue or local authority before you travel.",
+          "BlueLog Trip provides trip writing for general information. Guides are not a booking service, a tour operator, or professional safety, medical, or legal advice. Routes, prices, hours, and local rules change. Confirm details with the venue or local authority before you trip.",
         ],
       },
       {
@@ -67,7 +67,7 @@ const POLICIES = {
       {
         heading: "Liability",
         paragraphs: [
-          "The site is provided as available. To the extent the law allows, BlueLog is not liable for travel decisions you make from a guide, for third-party ads, or for interruptions in the service.",
+          "The site is provided as available. To the extent the law allows, BlueLog is not liable for trip decisions you make from a guide, for third-party ads, or for interruptions in the service.",
         ],
       },
     ],
@@ -97,7 +97,7 @@ const POLICIES = {
       {
         heading: "The desk",
         paragraphs: [
-          "BlueLog Travel Engine is a travel desk for city routes and neighborhood food. Each guide is drafted from local research, then checked before it is published for readers.",
+          "BlueLog Trip is a trip desk for city routes and neighborhood food. Each guide is drafted from local research, then checked before it is published for readers.",
           "We write for people planning a walk, a meal, or a short stay — not for a booking cart. Destinations cover Asia, Europe, and the Americas, with a separate shelf for local food.",
         ],
       },
@@ -160,7 +160,7 @@ function PolicyDialog({ policyId, onClose }) {
       <div className="policy-dialog-card">
         <header className="policy-dialog-header">
           <div>
-            <p className="policy-kicker">BlueLog Travel Engine</p>
+            <p className="policy-kicker">BlueLog Trip</p>
             <h2 id={titleId}>{policy.title}</h2>
             <p className="policy-updated">Last updated {policy.updated}</p>
           </div>
@@ -195,7 +195,7 @@ export default function Footer({ onNavigate, policyId, onOpenPolicy, onClosePoli
         <section className="footer-brand" aria-label="Brand">
           <button type="button" className="footer-logo" onClick={() => visit("/")}>
             <Compass size={22} aria-hidden="true" />
-            <span>BlueLog Travel Engine</span>
+            <span>BlueLog Trip</span>
           </button>
           <p className="footer-tagline">
             City routes and neighborhood food guides, checked before they go live.

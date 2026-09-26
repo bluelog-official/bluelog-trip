@@ -153,7 +153,7 @@ function localizeHeading(line) {
   for (const [pattern, label] of ENGLISH_HEADINGS) {
     if (pattern.test(match[3])) return `${match[1]}${match[2]}${label}`;
   }
-  return `${match[1]}${match[2]}Travel Notes`;
+  return `${match[1]}${match[2]}Trip Notes`;
 }
 
 export function localizeEnglishMarkdown(markdown) {
@@ -173,7 +173,7 @@ export function localizeEnglishMarkdown(markdown) {
 export function prepareArticle(markdown, languageEnglish, destination) {
   const source = stripFrontmatter(markdown);
   const readable = languageEnglish && MISSING_GUIDE.test(source)
-    ? `## ${destination || "Destination"} Travel Guide\n\nThis guide is not available yet.`
+    ? `## ${destination || "Destination"} Trip Guide\n\nThis guide is not available yet.`
     : source;
   const localized = languageEnglish ? localizeEnglishMarkdown(readable) : readable;
   const stripped = stripLeadingImage(localized);
@@ -213,7 +213,7 @@ export function buildGuideJsonLd({
     },
     publisher: {
       "@type": "Organization",
-      name: "BlueLog Travel Engine",
+      name: "BlueLog Trip",
     },
     mainEntityOfPage: url,
   };
