@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { adminAuthHeaders } from "../lib/adminSession";
 import { API_BASE_URL } from "../lib/guideCards";
 
@@ -19,10 +20,10 @@ const EMPTY_STATS = {
 };
 
 const PIPELINE = [
-  ["research_agent", "Research"],
-  ["writer_agent", "Writer"],
-  ["qa_agent", "QA"],
-  ["syndication_agent", "Syndication"],
+  ["research_agent", "dashboard.pipeline.research"],
+  ["writer_agent", "dashboard.pipeline.writer"],
+  ["qa_agent", "dashboard.pipeline.qa"],
+  ["syndication_agent", "dashboard.pipeline.syndication"],
 ];
 
 function scoreClass(score) {
@@ -30,6 +31,7 @@ function scoreClass(score) {
 }
 
 export default function Dashboard({ onUnauthorized }) {
+  const { t } = useTranslation();
   const [stats, setStats] = useState(EMPTY_STATS);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -50,10 +52,10 @@ export default function Dashboard({ onUnauthorized }) {
       throw new Error("Unauthorized");
     }
     if (!res.ok) {
-      throw new Error("대시보드 통계를 불러오지 못했습니다.");
+      throw new Error(t("dashboard.statsFailed"));
     }
     return res.json();
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     let cancelled = false;
@@ -108,9 +110,9 @@ export default function Dashboard({ onUnauthorized }) {
       }
       if (!res.ok) {
         const payload = await res.json().catch(() => ({}));
-        throw new Error(payload.detail || "배치 실행에 실패했습니다.");
+        throw new Error(payload.detail || t("dashboard.batchFailed"));
       }
-      setNotice("수동 배치 실행이 끝났습니다.");
+      setNotice(t("dashboard.batchDone"));
       const data = await loadStats();
       setStats(data);
     } catch (err) {
@@ -136,9 +138,9 @@ export default function Dashboard({ onUnauthorized }) {
       }
       if (!res.ok) {
         const payload = await res.json().catch(() => ({}));
-        throw new Error(payload.detail || "승인에 실패했습니다.");
+        throw new Error(payload.detail || t("dashboard.approveFailed"));
       }
-      setNotice(`${filename} 가이드를 승인했습니다.`);
+      setNotice(t("dashboard.approvedNotice", { filename }));
       const data = await loadStats();
       setStats(data);
     } catch (err) {
@@ -180,7 +182,7 @@ export default function Dashboard({ onUnauthorized }) {
         setCopiedId((current) => (current === alert.id ? null : current));
       }, 2000);
     } catch {
-      setError("클립보드에 복사하지 못했습니다.");
+      setError(t("dashboard.copyFailed"));
     }
   };
 
@@ -199,9 +201,9 @@ export default function Dashboard({ onUnauthorized }) {
       }
       if (!res.ok) {
         const payload = await res.json().catch(() => ({}));
-        throw new Error(payload.detail || "마케팅 알림을 지우지 못했습니다.");
+        throw new Error(payload.detail || t("dashboard.dismissFailed"));
       }
-      setNotice("마케팅 초안을 확인 완료로 처리했습니다.");
+      setNotice(t("dashboard.dismissed"));
       const data = await loadStats();
       setStats(data);
     } catch (err) {
@@ -215,17 +217,23 @@ export default function Dashboard({ onUnauthorized }) {
   const health = stats.agent_health || EMPTY_STATS.agent_health;
   const guides = stats.recent_guides || [];
   const alerts = stats.marketing_alerts || [];
+  const batchStatus = (status) => {
+    const key = String(status || "SUCCESS").toUpperCase();
+    if (key === "RUNNING") return t("dashboard.statusRunning");
+    if (key === "FAILED" || key === "ERROR") return t("dashboard.statusFailed");
+    return t("dashboard.statusSuccess");
+  };
 
   return (
     <section className="dash">
       <header className="dash-header">
         <div>
-          <h1>운영 대시보드</h1>
-          <p>사이트 콘텐츠, QA 게이트, 파이썬 배치 상태를 한 화면에서 확인합니다.</p>
+          <h1>{t("dashboard.title")}</h1>
+          <p>{t("dashboard.lead")}</p>
         </div>
         <button type="button" className="dash-trigger" onClick={triggerBatch} disabled={batching}>
           {batching ? <Loader2 className="spinner" size={16} aria-hidden="true" /> : null}
-          {batching ? "배치 실행 중..." : "Manual Batch Trigger (수동 배치 실행)"}
+          {batching ? t("dashboard.triggerRunning") : t("dashboard.trigger")}
         </button>
       </header>
 
@@ -234,30 +242,30 @@ export default function Dashboard({ onUnauthorized }) {
 
       <div className="dash-cards">
         <article className="dash-card">
-          <span>전체 콘텐츠</span>
+          <span>{t("dashboard.totalContent")}</span>
           <strong>{loading ? "…" : stats.total_guides_count}</strong>
         </article>
         <article className="dash-card">
-          <span>QA 75점+ 자동 발행</span>
+          <span>{t("dashboard.autoPublish")}</span>
           <strong>{loading ? "…" : stats.approved_count}</strong>
         </article>
         <article className="dash-card">
-          <span>검수 대기 보류</span>
+          <span>{t("dashboard.pendingHold")}</span>
           <strong>{loading ? "…" : stats.pending_count}</strong>
         </article>
         <article className={`dash-card batch ${String(batch.status || "").toLowerCase()}`}>
-          <span>배치 봇 상태</span>
-          <strong>{batch.status || "SUCCESS"}</strong>
+          <span>{t("dashboard.batchStatus")}</span>
+          <strong>{batchStatus(batch.status)}</strong>
           <small>
             {batch.target_city || "—"}
             {" · "}
-            {batch.last_run || "기록 없음"}
+            {batch.last_run || t("dashboard.noRecord")}
           </small>
         </article>
       </div>
 
-      <section className="health-panel" aria-label="에이전트 파이프라인 헬스체크">
-        <h2>Agent pipeline</h2>
+      <section className="health-panel" aria-label={t("dashboard.healthLabel")}>
+        <h2>{t("dashboard.healthTitle")}</h2>
         <ol className="health-bar">
           {PIPELINE.map(([key, label], index) => {
             const state = health[key] || "OK";
@@ -265,8 +273,8 @@ export default function Dashboard({ onUnauthorized }) {
             return (
               <li key={key} className={ok ? "health-step ok" : "health-step down"}>
                 {index > 0 ? <span className="health-arrow" aria-hidden="true">→</span> : null}
-                <span className="health-name">{label}</span>
-                <span className="health-state">{state}</span>
+                <span className="health-name">{t(label)}</span>
+                <span className="health-state">{ok ? t("dashboard.healthOk") : t("dashboard.healthDown")}</span>
               </li>
             );
           })}
@@ -274,21 +282,21 @@ export default function Dashboard({ onUnauthorized }) {
       </section>
 
       <section className="dash-table-wrap">
-        <h2>최근 생성 가이드</h2>
+        <h2>{t("dashboard.recentGuides")}</h2>
         <table className="dash-table">
           <thead>
             <tr>
-              <th>도시</th>
-              <th>QA 점수</th>
-              <th>발행 상태</th>
-              <th>생성일시</th>
-              <th>조치</th>
+              <th>{t("dashboard.city")}</th>
+              <th>{t("dashboard.qaScore")}</th>
+              <th>{t("dashboard.publishState")}</th>
+              <th>{t("dashboard.createdAt")}</th>
+              <th>{t("dashboard.action")}</th>
             </tr>
           </thead>
           <tbody>
             {guides.length === 0 ? (
               <tr>
-                <td colSpan={5}>{loading ? "불러오는 중..." : "생성된 가이드가 없습니다."}</td>
+                <td colSpan={5}>{loading ? t("dashboard.loading") : t("dashboard.noGuides")}</td>
               </tr>
             ) : (
               guides.map((guide) => (
@@ -300,7 +308,7 @@ export default function Dashboard({ onUnauthorized }) {
                   <td>
                     <span className={scoreClass(guide.qa_score)}>{guide.qa_score}</span>
                   </td>
-                  <td>{guide.is_approved ? "발행" : "보류"}</td>
+                  <td>{guide.is_approved ? t("dashboard.published") : t("dashboard.held")}</td>
                   <td>{guide.created_at}</td>
                   <td>
                     <button
@@ -309,7 +317,7 @@ export default function Dashboard({ onUnauthorized }) {
                       disabled={guide.is_approved || approvingId === guide.filename}
                       onClick={() => approveGuide(guide.filename)}
                     >
-                      {guide.is_approved ? "승인됨" : "승인 (Approve)"}
+                      {guide.is_approved ? t("dashboard.approved") : t("dashboard.approve")}
                     </button>
                   </td>
                 </tr>
@@ -319,10 +327,10 @@ export default function Dashboard({ onUnauthorized }) {
         </table>
       </section>
 
-      <section className="marketing-panel" aria-label="Marketing Alerts (Reddit Drafts)">
-        <h2>Marketing Alerts (Reddit Drafts)</h2>
+      <section className="marketing-panel" aria-label={t("dashboard.marketingLabel")}>
+        <h2>{t("dashboard.marketingTitle")}</h2>
         {alerts.length === 0 ? (
-          <p className="marketing-empty">{loading ? "불러오는 중..." : "저장된 Reddit 초안이 없습니다."}</p>
+          <p className="marketing-empty">{loading ? t("dashboard.loading") : t("dashboard.noDrafts")}</p>
         ) : (
           <ul className="marketing-list">
             {alerts.map((alert) => (
@@ -338,7 +346,7 @@ export default function Dashboard({ onUnauthorized }) {
                   </div>
                   <div className="marketing-actions">
                     <button type="button" className="alert-copy" onClick={() => copyDraft(alert)}>
-                      {copiedId === alert.id ? "Copied" : "Copy to Clipboard"}
+                      {copiedId === alert.id ? t("dashboard.copied") : t("dashboard.copy")}
                     </button>
                     <button
                       type="button"
@@ -346,7 +354,7 @@ export default function Dashboard({ onUnauthorized }) {
                       disabled={dismissingId === alert.id}
                       onClick={() => dismissAlert(alert.id)}
                     >
-                      {dismissingId === alert.id ? "처리 중..." : "Dismiss (확인 완료)"}
+                      {dismissingId === alert.id ? t("dashboard.dismissing") : t("dashboard.dismiss")}
                     </button>
                   </div>
                 </header>

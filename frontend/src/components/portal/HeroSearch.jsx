@@ -1,64 +1,45 @@
 import { Search } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function HeroSearch({ query, onQueryChange, onSearch }) {
+  const { t } = useTranslation();
   return (
     <section className="hero">
-      <p className="hero-kicker">Global trip desk</p>
-      <h1 className="hero-title">Find Local Trip & Food Guides</h1>
-      <p className="hero-copy">
-        City routes, neighborhood meals, and guides that passed QA before they go live.
-      </p>
+      <p className="hero-kicker">{t("hero.kicker")}</p>
+      <h1 className="hero-title">{t("hero.title")}</h1>
+      <p className="hero-copy">{t("hero.copy")}</p>
       <form className="hero-search" onSubmit={onSearch}>
         <Search size={18} aria-hidden="true" />
         <input
           type="search"
           value={query}
           onChange={(event) => onQueryChange(event.target.value)}
-          placeholder="Try Paris, ramen, Bali…"
-          aria-label="Find Local Trip & Food Guides"
+          placeholder={t("hero.placeholder")}
+          aria-label={t("hero.title")}
         />
-        <button type="submit">Search</button>
+        <button type="submit">{t("hero.search")}</button>
       </form>
     </section>
   );
 }
 
-const INTROS = {
-  all: {
-    kicker: "Destinations",
-    title: "All regions",
-    text: "City guides across Asia, Europe, and the Americas.",
-  },
-  asia: {
-    kicker: "Destinations",
-    title: "Asia",
-    text: "Temples, islands, night markets, and the meals around them.",
-  },
-  europe: {
-    kicker: "Destinations",
-    title: "Europe",
-    text: "City breaks, museum timing, and neighborhood tables.",
-  },
-  americas: {
-    kicker: "Destinations",
-    title: "Americas",
-    text: "Coast-to-coast walks and the local plates along the way.",
-  },
-  food: {
-    kicker: "Local Food",
-    title: "Eat with the neighborhood",
-    text: "Named stalls, budget meals, and the prices guides actually list.",
-  },
+const INTRO_KEYS = {
+  all: "categories.all",
+  asia: "categories.asia",
+  europe: "categories.europe",
+  americas: "categories.americas",
+  food: "categories.food",
 };
 
 export function CategoryIntro({ category }) {
-  const intro = INTROS[category];
-  if (!intro) return null;
+  const { t } = useTranslation();
+  const prefix = INTRO_KEYS[category];
+  if (!prefix) return null;
   return (
     <section className="category-intro">
-      <p className="hero-kicker">{intro.kicker}</p>
-      <h1 className="category-title">{intro.title}</h1>
-      <p className="category-copy">{intro.text}</p>
+      <p className="hero-kicker">{t(`${prefix}.kicker`)}</p>
+      <h1 className="category-title">{t(`${prefix}.title`)}</h1>
+      <p className="category-copy">{t(`${prefix}.text`)}</p>
     </section>
   );
 }

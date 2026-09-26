@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 type AdFormat = "auto" | "fluid" | "rectangle" | "horizontal" | "vertical";
 
@@ -41,6 +42,7 @@ export default function AdSenseUnit({
   format = "auto",
   className = "",
 }: AdSenseUnitProps) {
+  const { t } = useTranslation();
   const insRef = useRef<HTMLModElement>(null);
   const pushed = useRef(false);
 
@@ -71,16 +73,16 @@ export default function AdSenseUnit({
         data-ad-slot={slotId}
         data-ad-format={format}
         role="complementary"
-        aria-label="Sponsored Content"
+        aria-label={t("ads.label")}
       >
-        <span className="adsense-sponsored-kicker">Sponsored Content</span>
-        <p>Advertisement space reserved for a responsive Google AdSense unit.</p>
+        <span className="adsense-sponsored-kicker">{t("ads.kicker")}</span>
+        <p>{t("ads.placeholder")}</p>
       </aside>
     );
   }
 
   return (
-    <aside className={`adsense-unit adsense-live ${className}`.trim()} aria-label="Advertisement">
+    <aside className={`adsense-unit adsense-live ${className}`.trim()} aria-label={t("ads.liveLabel")}>
       <ins
         ref={insRef}
         className="adsbygoogle"

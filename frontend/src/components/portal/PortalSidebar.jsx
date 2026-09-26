@@ -1,19 +1,21 @@
+import { useTranslation } from "react-i18next";
 import AdSenseUnit from "../AdSenseUnit";
-import { PLATFORM_LABELS, formatPostDate, latestViralLogs } from "../../lib/communityStore";
+import { formatPostDate, latestViralLogs } from "../../lib/communityStore";
 import { popularDestinations } from "../../lib/guideCards";
-import { uiCopy } from "../../lib/localeCopy";
+import i18n, { appLanguage } from "../../i18n/i18n";
 
-export default function PortalSidebar({ cards, posts, onPickDestination, onOpenLog, language }) {
-  const copy = uiCopy(language);
+export default function PortalSidebar({ cards, posts, onPickDestination, onOpenLog }) {
+  const { t } = useTranslation();
+  const language = appLanguage();
   const popular = popularDestinations(cards, 5);
   const logs = latestViralLogs(posts, 5);
 
   return (
-    <aside className="portal-side" aria-label="Highlights">
+    <aside className="portal-side" aria-label={t("sidebar.highlights")}>
       <section className="side-card">
-        <h2>{copy.popularTitle}</h2>
+        <h2>{t("sidebar.popularTitle")}</h2>
         {popular.length === 0 ? (
-          <p className="side-empty">{copy.popularEmpty}</p>
+          <p className="side-empty">{t("sidebar.popularEmpty")}</p>
         ) : (
           <ol className="rank-list">
             {popular.map((card, index) => (
@@ -22,7 +24,7 @@ export default function PortalSidebar({ cards, posts, onPickDestination, onOpenL
                   <span className="rank-no">{index + 1}</span>
                   <span className="rank-copy">
                     <strong>{card.destination}</strong>
-                    <small>{card.approved ? "Verified Guide" : "Checked by Local AI"}</small>
+                    <small>{card.approved ? t("catalog.verified") : t("catalog.checked")}</small>
                   </span>
                 </button>
               </li>
@@ -32,25 +34,31 @@ export default function PortalSidebar({ cards, posts, onPickDestination, onOpenL
       </section>
 
       <section className="side-card">
-        <h2>{copy.viralTitle}</h2>
+        <h2>{t("sidebar.viralTitle")}</h2>
         {logs.length === 0 ? (
-          <p className="side-empty">{copy.viralEmpty}</p>
+          <p className="side-empty">{t("sidebar.viralEmpty")}</p>
         ) : (
           <ul className="log-list">
-            {logs.map((post) => (
-              <li key={post.id}>
-                <button type="button" onClick={() => onOpenLog(post)}>
-                  <span className={`platform-pill ${post.platform}`}>
-                    {PLATFORM_LABELS[post.platform] || post.platform}
-                  </span>
-                  <strong>{post.title}</strong>
-                  <small>
-                    {post.metric ? `${post.metric} · ` : ""}
-                    {formatPostDate(post.createdAt)}
-                  </small>
-                </button>
-              </li>
-            ))}
+            {logs.map((post) => {
+              const titleKey = `community.seeds.${post.id}.title`;
+              const title = i18n.exists(titleKey) ? t(titleKey) : post.title;
+              const metricKey = `community.seeds.${post.id}.metric`;
+              const metric = i18n.exists(metricKey) ? t(metricKey) : post.metric;
+              return (
+                <li key={post.id}>
+                  <button type="button" onClick={() => onOpenLog(post)}>
+                    <span className={`platform-pill ${post.platform}`}>
+                      {t(`community.labels.${post.platform}`, { defaultValue: post.platform })}
+                    </span>
+                    <strong>{title}</strong>
+                    <small>
+                      {metric ? `${metric} · ` : ""}
+                      {formatPostDate(post.createdAt, language)}
+                    </small>
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>

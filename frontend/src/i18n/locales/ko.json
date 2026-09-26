@@ -1,0 +1,383 @@
+{
+  "language": {
+    "label": "언어",
+    "en": "영어",
+    "ko": "한국어"
+  },
+  "nav": {
+    "home": "홈",
+    "destinations": "여행지",
+    "allRegions": "전체 지역",
+    "asia": "아시아",
+    "europe": "유럽",
+    "americas": "아메리카",
+    "oceania": "오세아니아",
+    "localFood": "현지 음식",
+    "community": "커뮤니티와 바이럴 기록",
+    "searchPlaceholder": "검색",
+    "searchGuides": "가이드 검색",
+    "openMenu": "메뉴 열기",
+    "closeMenu": "메뉴 닫기",
+    "categories": "분류",
+    "dashboard": "대시보드",
+    "admin": "관리 / 생성기",
+    "logout": "로그아웃"
+  },
+  "footer": {
+    "brand": "브랜드",
+    "tagline": "도시 동선과 동네 음식 가이드를 공개 전에 확인합니다.",
+    "navigation": "둘러보기",
+    "navLabel": "바닥글 탐색",
+    "legalHeading": "법적 고지",
+    "legalLabel": "법적 고지",
+    "supportHeading": "지원과 검색",
+    "supportLabel": "지원",
+    "requiredLinks": "필수 사이트 링크",
+    "privacy": "개인정보 처리방침",
+    "terms": "이용약관",
+    "cookie": "쿠키 정책",
+    "about": "소개",
+    "editorial": "편집 정책",
+    "contact": "문의",
+    "sitemap": "사이트맵",
+    "home": "홈",
+    "destinations": "여행지",
+    "asia": "아시아",
+    "europe": "유럽",
+    "americas": "아메리카",
+    "localFood": "현지 음식",
+    "community": "커뮤니티 기록",
+    "copyright": "저작권 ⓒ 2026 BlueLog Trip. 모든 권리를 보유합니다."
+  },
+  "hero": {
+    "kicker": "글로벌 여행 데스크",
+    "title": "현지 여행과 음식 가이드 찾기",
+    "copy": "도시 동선, 동네 식사, 공개 전에 품질 검사를 통과한 가이드를 모았습니다.",
+    "placeholder": "파리, 라멘, 발리를 검색해 보세요",
+    "search": "검색"
+  },
+  "categories": {
+    "all": {
+      "kicker": "여행지",
+      "title": "전체 지역",
+      "text": "아시아, 유럽, 아메리카의 도시 가이드입니다."
+    },
+    "asia": {
+      "kicker": "여행지",
+      "title": "아시아",
+      "text": "사원, 섬, 야시장과 그 주변의 식사입니다."
+    },
+    "europe": {
+      "kicker": "여행지",
+      "title": "유럽",
+      "text": "짧은 도시 여행, 박물관 시간, 동네 식당입니다."
+    },
+    "americas": {
+      "kicker": "여행지",
+      "title": "아메리카",
+      "text": "해안에서 해안까지의 산책과 그 길의 현지 음식입니다."
+    },
+    "food": {
+      "kicker": "현지 음식",
+      "title": "동네와 함께 먹기",
+      "text": "이름이 있는 가게, 알뜰한 식사, 가이드에 적힌 가격입니다."
+    }
+  },
+  "catalog": {
+    "loading": "가이드를 불러오는 중",
+    "empty": "이 화면에는 아직 가이드가 없습니다.",
+    "loadError": "가이드를 불러오지 못했습니다. 서버가 실행 중인지 확인해 주세요.",
+    "verified": "검증된 가이드",
+    "checked": "현지 인공지능 확인"
+  },
+  "sidebar": {
+    "highlights": "하이라이트",
+    "popularTitle": "인기 여행지 상위 5곳",
+    "popularEmpty": "가이드가 생성된 뒤 이곳에 순위가 표시됩니다.",
+    "viralTitle": "최근 바이럴 기록",
+    "viralEmpty": "첫 게시 이후 성과 메모가 표시됩니다."
+  },
+  "guide": {
+    "back": "전체 가이드",
+    "toc": "이 페이지의 목차",
+    "sources": "출처",
+    "published": "발행",
+    "author": "BlueLog 현지 인공지능",
+    "verified": "검증된 가이드",
+    "checked": "현지 인공지능 확인",
+    "loading": "이 가이드를 불러오는 중…",
+    "missing": "이 가이드는 아직 제공되지 않습니다.",
+    "breadcrumb": "경로",
+    "articleTab": "본문",
+    "viralTab": "바이럴 내보내기",
+    "openCommunity": "커뮤니티와 바이럴 기록 열기",
+    "reviewPending": "검수 대기",
+    "reviewApproved": "검수 승인",
+    "reviewPendingHelp": "이 초안은 승인되기 전까지 게시되지 않습니다.",
+    "reviewApprovedHelp": "이 가이드는 게시되었습니다.",
+    "publishing": "게시 중...",
+    "approve": "검수 후 게시"
+  },
+  "viral": {
+    "empty": "이 가이드에는 아직 내보낼 문구가 없습니다.",
+    "reddit": "Reddit",
+    "quora": "Quora",
+    "pinterest": "Pinterest",
+    "backlink": "백링크",
+    "teasers": "소셜 소개글",
+    "hashtags": "해시태그",
+    "altPrefix": "대체 텍스트",
+    "copy": "복사",
+    "copied": "복사됨"
+  },
+  "community": {
+    "kicker": "커뮤니티와 바이럴 기록",
+    "title": "커뮤니티 게시판",
+    "lead": "Reddit, Quora, Pinterest 성과를 공유하거나 다음 가이드를 위한 팁을 남겨 주세요.",
+    "tabsLabel": "바이럴 기록 분류",
+    "write": "기록 작성",
+    "name": "이름",
+    "namePlaceholder": "여행자",
+    "traveler": "여행자",
+    "desk": "BlueLog Desk",
+    "channel": "채널",
+    "titleField": "제목",
+    "titlePlaceholder": "무엇이 통했는지",
+    "result": "결과",
+    "resultPlaceholder": "추천 1,200, 선택 사항",
+    "note": "내용",
+    "notePlaceholder": "무엇을 올렸는지, 다음 가이드에서 무엇을 바꿀지 적어 주세요.",
+    "required": "제목과 내용은 필수입니다.",
+    "submit": "게시판에 올리기",
+    "empty": "이 탭에는 아직 기록이 없습니다.",
+    "tabs": {
+      "all": "전체",
+      "reddit": "Reddit",
+      "quora": "Quora",
+      "pinterest": "Pinterest",
+      "tip": "가이드 팁"
+    },
+    "labels": {
+      "reddit": "Reddit",
+      "quora": "Quora",
+      "pinterest": "Pinterest",
+      "tip": "가이드 팁"
+    },
+    "channels": {
+      "reddit": "Reddit 성과",
+      "quora": "Quora 성과",
+      "pinterest": "Pinterest 성과",
+      "tip": "가이드 팁"
+    },
+    "seeds": {
+      "seed-reddit-kyoto": {
+        "title": "교토 막차 시간 메모가 Reddit에서 추천 1,200을 넘었습니다",
+        "metric": "추천 1,200",
+        "body": "교토 가이드의 막차 시각을 홍보문이 아니라 직접 경험한 메모로 올렸습니다. 가이드 링크는 역 이름 다음 두 번째 문단에 두었습니다. 클릭 대부분은 지도를 요청한 댓글에서 나왔으므로, 다음 초안은 구체적인 시각으로 시작해야 합니다."
+      },
+      "seed-quora-paris": {
+        "title": "파리 3일 일정 답변이 독자를 루브르 구간으로 계속 보냈습니다",
+        "metric": "조회 640",
+        "body": "질문은 사흘이면 충분한지였습니다. 답변은 가이드의 날짜별 구성을 쓰고, 링크 앞에 입장권 가격을 적었습니다. 모나리자 대기 줄 팁을 원한 독자가 전체 가이드를 열었습니다."
+      },
+      "seed-pinterest-bali": {
+        "title": "우붓 논밭 핀이 저장 8,600을 넘었습니다",
+        "metric": "저장 8,600",
+        "body": "핀은 발리 가이드에 이미 있는 논밭 사진을 썼고, 대체 텍스트에 우붓을 넣었습니다. 보드는 섬 음식과 사원입니다. 설명은 두 문장 안으로 유지하고 가이드 경로로 끝냅니다."
+      },
+      "seed-tip-table": {
+        "title": "첫 음식 소제목 위에 현지 가격표를 두세요",
+        "metric": "",
+        "body": "풍경 문단으로 식사 구간을 여는 가이드보다, 가격표로 여는 가이드가 독자를 더 오래 붙잡습니다. 음식, 장소, 현지 가격 세 줄만 두세요. 이 블록은 Quora 답변에 다시 쓰기도 가장 쉽습니다."
+      }
+    }
+  },
+  "admin": {
+    "note": "작성 언어는 상단 바를 따릅니다. 현재:",
+    "languageName": "한국어",
+    "destination": "여행 목적지",
+    "placeholder": "예: 로마, 발리, 뉴욕",
+    "generating": "생성 중...",
+    "submit": "가이드 자동 생성",
+    "close": "생성기 닫기",
+    "closeButton": "닫기",
+    "kicker": "관리",
+    "title": "생성기",
+    "redirecting": "관리자 로그인으로 이동합니다."
+  },
+  "login": {
+    "closeBackdrop": "관리자 로그인 닫기",
+    "close": "닫기",
+    "kicker": "BlueLog",
+    "title": "관리자 로그인",
+    "id": "아이디",
+    "password": "비밀번호",
+    "error": "관리자 정보가 올바르지 않습니다.",
+    "submitting": "로그인 중...",
+    "submit": "로그인"
+  },
+  "status": {
+    "ready": "가이드를 만들었습니다.",
+    "readyScore": "가이드를 만들었습니다. 품질 점수: {{score}}.",
+    "failed": "가이드를 만들지 못했습니다. {{message}}",
+    "approved": "검수가 끝났습니다. 사이트맵을 갱신하고 검색엔진에 핑을 보냈습니다.",
+    "approveFailed": "가이드를 승인하지 못했습니다. {{message}}",
+    "approveFailedShort": "승인에 실패했습니다.",
+    "generateFailed": "가이드 생성에 실패했습니다."
+  },
+  "meta": {
+    "siteDescription": "BlueLog Trip - 엄선한 현지 도시 가이드",
+    "homeTitle": "BlueLog Trip - 엄선한 현지 도시 가이드",
+    "destinationsTitle": "여행지 · BlueLog Trip",
+    "foodTitle": "현지 음식 · BlueLog Trip",
+    "communityTitle": "커뮤니티와 바이럴 기록 · BlueLog Trip",
+    "dashboardTitle": "대시보드 · BlueLog Trip",
+    "privacyTitle": "개인정보 처리방침 · BlueLog Trip",
+    "privacyDescription": "BlueLog Trip이 쿠키, Google AdSense, 제3자 쿠키, DART 쿠키를 사용하는 방법입니다.",
+    "termsTitle": "이용약관 · BlueLog Trip",
+    "termsDescription": "BlueLog Trip 도시 가이드를 읽고 이용하는 조건입니다.",
+    "aboutTitle": "소개 · BlueLog Trip",
+    "aboutDescription": "BlueLog Trip은 인공지능이 돕는 현지 도시 가이드를 쓰고, 게시 전에 확인합니다.",
+    "contactTitle": "문의 · BlueLog Trip",
+    "contactDescription": "BlueLog Trip 문의는 bluelog.official@gmail.com 입니다.",
+    "notFoundTitle": "페이지를 찾을 수 없음 · BlueLog Trip",
+    "notFoundDescription": "이 주소는 BlueLog Trip에 없습니다. 홈으로 돌아가세요.",
+    "articleTitle": "{{title}} · BlueLog Trip"
+  },
+  "ads": {
+    "label": "광고",
+    "kicker": "광고",
+    "placeholder": "반응형 Google AdSense 광고 자리가 여기에 표시됩니다.",
+    "liveLabel": "광고"
+  },
+  "visitors": {
+    "badge": "오늘: {{today}} / 누적: {{total}}"
+  },
+  "notFound": {
+    "kicker": "404",
+    "title": "페이지를 찾을 수 없습니다",
+    "body": "그 주소는 BlueLog Trip 가이드나 정책 페이지가 아닙니다.",
+    "home": "홈으로 돌아가기"
+  },
+  "about": {
+    "kicker": "BlueLog Trip",
+    "title": "BlueLog Trip 소개",
+    "updated": "최종 업데이트 2026년 9월 26일",
+    "missionTitle": "우리가 하는 일",
+    "mission1": "BlueLog Trip은 인공지능이 돕는 현지 가이드 데스크입니다. 도시를 조사하고, 걸어서 다닐 동선과 동네 음식 메모를 초안으로 만든 뒤, 산책이나 식사, 짧은 체류를 계획하는 독자에게 공개하기 전에 확인합니다.",
+    "mission2": "다루는 범위는 아시아, 유럽, 아메리카입니다. 현장에 있는 사람을 위해 직접 씁니다. 예약 장바구니가 아니며, 다른 사이트를 긁어 그대로 다시 올리지 않습니다.",
+    "trustTitle": "경험, 전문성, 신뢰",
+    "trust1": "각 가이드는 자체 인공지능 데이터 엔진이 모은 현지 조사에서 시작하고, 편집 확인을 거칩니다. 검증된 가이드 표시는 게시를 위해 검토되었다는 뜻입니다. 현지 인공지능 확인 표시는 그 확인 과정을 거쳤으나 최종 게시 단계를 기다릴 수 있다는 뜻입니다.",
+    "trust2": "가격, 영업시간, 교통 규칙은 여전히 해당 장소나 도시의 것입니다. 가이드에 그렇게 적고, 현장에서 다시 확인하시라고 안내합니다. 사실 관계 수정은 <mail>{{email}}</mail>로 보내 주세요.",
+    "trust3": "게시된 페이지에는 Google AdSense를 포함한 광고가 나올 수 있습니다. 광고는 우리가 권하는 동선을 바꾸지 않습니다. 쿠키 사용 방법은 개인정보 처리방침에 설명되어 있습니다.",
+    "contactTitle": "어디로 쓸까요",
+    "contactBody": "편집 질문, 빠진 동네, 개인정보 요청은 같은 데스크로 보내 주세요. <mail>{{email}}</mail>. 게시된 페이지를 열 수 있도록 도시와 가이드 제목을 함께 적어 주세요."
+  },
+  "privacy": {
+    "kicker": "BlueLog Trip",
+    "title": "개인정보 처리방침",
+    "updated": "최종 업데이트 2026년 9월 26일",
+    "whoTitle": "운영 주체",
+    "whoBody": "BlueLog Trip은 도시 도보 동선, 동네 음식 메모, 커뮤니티 여행 기록을 게시합니다. 이 방침은 사이트가 무엇을 수집하는지, Google을 포함한 광고 파트너가 쿠키를 어떻게 쓸 수 있는지 설명합니다.",
+    "collectTitle": "수집하는 정보",
+    "collect1": "검색하거나, 가이드를 열거나, 문의 메시지를 보내면 사이트는 입력한 글, 기본 기기와 브라우저 정보, 본 페이지를 처리할 수 있습니다. 그 정보는 가이드를 보여주고, 사이트를 유지하고, 어떤 페이지가 유용한지 파악하는 데 씁니다.",
+    "collect2": "방문자 수는 같은 브라우저를 하루에 한 번만 세기 위해 인터넷 주소의 솔트 처리된 해시를 저장합니다. 개인정보를 판매하지 않으며, 게시된 가이드를 읽는 데 계정이 필요하지 않습니다.",
+    "cookiesTitle": "쿠키와 제3자 쿠키",
+    "cookies1": "BlueLog Trip은 브라우저에 남겨 둔 커뮤니티 기록 초안처럼 화면 선택을 위해 필수 쿠키와 로컬 저장소를 사용합니다. 그 도구만으로 광고 프로필을 만들지 않습니다.",
+    "cookies2": "Google을 포함한 제3자 업체는 이 웹사이트나 다른 웹사이트의 이전 방문에 따라 광고를 제공하려고 쿠키를 사용합니다. 제3자 광고 파트너는 여러 사이트에서 브라우저를 알아보기 위해 웹 비콘과 비슷한 기술도 쓸 수 있습니다. BlueLog Trip은 그 파트너가 설정하는 쿠키를 통제하지 않습니다.",
+    "cookies3": "Google의 광고 쿠키 사용은 Google과 그 파트너가 이 사이트와 인터넷의 다른 사이트 방문을 바탕으로 사용자에게 광고를 제공하게 합니다. 그 쿠키는 쿠키 식별자, 인터넷 주소, 브라우저 종류, 본 페이지를 포함한 정보를 브라우저에서 수집하거나 받을 수 있고, 그 정보로 광고를 제공하고 광고 성과를 측정합니다.",
+    "adsenseTitle": "Google AdSense와 DART 쿠키",
+    "adsense1": "이 사이트는 Google AdSense를 포함한 광고로 운영됩니다. 제3자 업체인 Google은 BlueLog Trip에 광고를 제공하기 위해 쿠키를 사용합니다.",
+    "adsense2": "Google의 DART 쿠키 사용은 이 사이트와 인터넷의 다른 사이트 방문을 바탕으로 방문자에게 광고를 제공하게 합니다. 방문자는 Google 광고 및 콘텐츠 네트워크 개인정보 처리방침 <ads>{{adsUrl}}</ads>에서 DART 쿠키 사용을 거부할 수 있습니다.",
+    "adsense3": "맞춤 광고는 Google 광고 설정 <settings>{{settingsUrl}}</settings>에서 끌 수 있습니다. 맞춤 광고를 위한 일부 제3자 업체의 쿠키 사용은 <choices>{{choicesUrl}}</choices>에서, 유럽 경제 지역에서는 <eea>{{eeaUrl}}</eea>에서 거부할 수 있습니다. 브라우저 설정으로 쿠키를 막을 수 있습니다. 쿠키를 막으면 일부 사이트 기능이 제한될 수 있으며, 광고가 모두 사라지지는 않습니다.",
+    "othersTitle": "그 밖의 제3자",
+    "othersBody": "가이드는 지도, 사진, 외부 사이트로 연결될 수 있습니다. 그 사이트는 자체 개인정보 관행을 가집니다. BlueLog Trip의 링크는 그 사이트의 데이터 처리를 보증하지 않습니다.",
+    "contactTitle": "문의",
+    "contactBody": "이 방침에 대한 질문은 <mail>{{email}}</mail>로 보낼 수 있습니다."
+  },
+  "terms": {
+    "kicker": "BlueLog Trip",
+    "title": "이용약관",
+    "updated": "최종 업데이트 2026년 9월 26일",
+    "useTitle": "사이트 이용",
+    "use1": "이 약관은 도시 가이드, 커뮤니티 기록, 바닥글에서 연결된 페이지를 포함한 BlueLog Trip 이용에 적용됩니다. 사이트를 이용하면 이 약관에 동의하는 것입니다. 동의하지 않으면 사이트를 이용하지 마세요.",
+    "use2": "BlueLog Trip은 일반 정보를 위한 여행 글을 제공합니다. 가이드는 예약 서비스, 여행사, 안전·의료·법률 전문 조언이 아닙니다. 동선, 가격, 시간, 현지 규칙은 바뀝니다. 여행 전에 장소나 현지 기관에서 내용을 확인하세요.",
+    "postsTitle": "이용자가 올리는 글",
+    "postsBody": "커뮤니티 기록은 본인 글로 올려 주세요. 불법이거나, 오해를 일으키거나, 다른 사람의 권리를 침해하는 내용은 올리지 마세요. 이 약관을 어긴 글은 삭제할 수 있습니다.",
+    "contentTitle": "우리 콘텐츠",
+    "contentBody": "별도 출처 표기가 없으면 가이드, 화면 구성, BlueLog Trip 이름은 BlueLog Trip의 것입니다. 게시된 가이드의 링크는 공유할 수 있습니다. 사이트를 통째로 복사하거나 우리 가이드를 자신의 상업 상품처럼 제시할 수 없습니다.",
+    "adsTitle": "광고",
+    "adsBody": "일부 페이지에는 Google AdSense를 포함한 제3자 광고가 표시됩니다. 광고주의 제안은 광고주가 책임집니다. 표시된 광고는 BlueLog Trip의 추천이 아닙니다.",
+    "liabilityTitle": "책임",
+    "liabilityBody": "사이트는 제공되는 상태 그대로 이용합니다. 법이 허용하는 범위에서 BlueLog Trip은 가이드에 따른 여행 결정, 제3자 광고, 서비스 중단에 대해 책임지지 않습니다.",
+    "contactTitle": "문의",
+    "contactBody": "이 약관에 대한 질문은 <mail>{{email}}</mail>로 보낼 수 있습니다."
+  },
+  "contact": {
+    "kicker": "BlueLog Trip",
+    "title": "문의",
+    "updated": "데스크로 온 메모는 모두 읽습니다.",
+    "emailTitle": "데스크에 메일 보내기",
+    "emailBody": "가이드 수정, 빠진 동네, 광고 질문, 개인정보 요청은 <mail>{{email}}</mail>로 보낼 수 있습니다. 게시된 페이지에 대해 쓸 때는 도시와 가이드 제목을 함께 적어 주세요.",
+    "formTitle": "문의 보내기",
+    "formHelp": "이 양식은 메일이 이미 {{email}}로 적힌 채로 메일 앱을 엽니다.",
+    "name": "이름",
+    "email": "회신 메일",
+    "message": "메시지",
+    "submit": "문의 보내기",
+    "subject": "[BlueLog Trip] {{name}} 님의 문의",
+    "bodyHeader": "이름: {{name}}\n회신: {{email}}\n\n{{message}}",
+    "notice": "메일 앱이 {{email}}로 메시지를 열어야 합니다. 열리지 않으면 같은 내용을 직접 보내 주세요."
+  },
+  "dashboard": {
+    "title": "운영 대시보드",
+    "lead": "사이트 콘텐츠, 품질 게이트, 파이썬 배치 상태를 한 화면에서 확인합니다.",
+    "trigger": "수동 배치 실행",
+    "triggerRunning": "배치 실행 중...",
+    "totalContent": "전체 콘텐츠",
+    "autoPublish": "75점 이상 자동 발행",
+    "pendingHold": "검수 대기 보류",
+    "batchStatus": "배치 봇 상태",
+    "noRecord": "기록 없음",
+    "healthLabel": "에이전트 파이프라인 상태",
+    "healthTitle": "에이전트 파이프라인",
+    "recentGuides": "최근 생성 가이드",
+    "city": "도시",
+    "qaScore": "품질 점수",
+    "publishState": "발행 상태",
+    "createdAt": "생성 일시",
+    "action": "조치",
+    "loading": "불러오는 중...",
+    "noGuides": "생성된 가이드가 없습니다.",
+    "published": "발행",
+    "held": "보류",
+    "approved": "승인됨",
+    "approve": "승인",
+    "marketingLabel": "마케팅 알림",
+    "marketingTitle": "마케팅 알림",
+    "noDrafts": "저장된 Reddit 초안이 없습니다.",
+    "copied": "복사됨",
+    "copy": "클립보드에 복사",
+    "dismissing": "처리 중...",
+    "dismiss": "확인 완료",
+    "batchFailed": "배치 실행에 실패했습니다.",
+    "batchDone": "수동 배치 실행이 끝났습니다.",
+    "approveFailed": "승인에 실패했습니다.",
+    "approvedNotice": "{{filename}} 가이드를 승인했습니다.",
+    "statsFailed": "대시보드 통계를 불러오지 못했습니다.",
+    "copyFailed": "클립보드에 복사하지 못했습니다.",
+    "dismissFailed": "마케팅 알림을 지우지 못했습니다.",
+    "dismissed": "마케팅 초안을 확인 완료로 처리했습니다.",
+    "statusSuccess": "성공",
+    "statusRunning": "실행 중",
+    "statusFailed": "실패",
+    "healthOk": "정상",
+    "healthDown": "중단",
+    "pipeline": {
+      "research": "조사",
+      "writer": "작성",
+      "qa": "품질",
+      "syndication": "배포"
+    }
+  }
+}

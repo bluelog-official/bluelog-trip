@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BadgeCheck } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 function CardThumb({ src, title }) {
   const [failed, setFailed] = useState(false);
@@ -10,6 +11,7 @@ function CardThumb({ src, title }) {
 }
 
 function StoryCard({ card, onOpen }) {
+  const { t } = useTranslation();
   return (
     <button type="button" className="story-card" onClick={() => onOpen(card)}>
       <div className="thumb-wrap">
@@ -17,10 +19,10 @@ function StoryCard({ card, onOpen }) {
         {card.approved ? (
           <span className="qa-badge approved">
             <BadgeCheck size={14} aria-hidden="true" />
-            Verified Guide
+            {t("catalog.verified")}
           </span>
         ) : (
-          <span className="qa-badge pending">Checked by Local AI</span>
+          <span className="qa-badge pending">{t("catalog.checked")}</span>
         )}
       </div>
       <div className="story-body">
@@ -37,9 +39,11 @@ function StoryCard({ card, onOpen }) {
 }
 
 export default function ArticleGrid({ cards, loading, error, onOpen }) {
+  const { t } = useTranslation();
+
   if (loading) {
     return (
-      <div className="card-grid" aria-busy="true" aria-label="Loading guides">
+      <div className="card-grid" aria-busy="true" aria-label={t("catalog.loading")}>
         {Array.from({ length: 4 }, (_, index) => (
           <div key={index} className="story-skeleton" />
         ))}
@@ -52,7 +56,7 @@ export default function ArticleGrid({ cards, loading, error, onOpen }) {
   }
 
   if (cards.length === 0) {
-    return <p className="grid-empty">No guides in this view yet.</p>;
+    return <p className="grid-empty">{t("catalog.empty")}</p>;
   }
 
   return (

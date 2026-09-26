@@ -1,4 +1,7 @@
+import { useTranslation } from "react-i18next";
+
 export default function NotFound({ onNavigate }) {
+  const { t } = useTranslation();
   const goHome = (event) => {
     event.preventDefault();
     onNavigate("/");
@@ -7,11 +10,11 @@ export default function NotFound({ onNavigate }) {
 
   return (
     <article className="policy-page not-found-page">
-      <p className="policy-kicker">404</p>
-      <h1>Page not found</h1>
-      <p>That address is not a BlueLog Trip guide or policy page.</p>
+      <p className="policy-kicker">{t("notFound.kicker")}</p>
+      <h1>{t("notFound.title")}</h1>
+      <p>{t("notFound.body")}</p>
       <a className="not-found-home" href="/" onClick={goHome}>
-        Back to the homepage
+        {t("notFound.home")}
       </a>
     </article>
   );

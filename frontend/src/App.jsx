@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Footer from "./components/Footer";
 import VisitorBadge from "./components/VisitorBadge";
 import About from "./pages/About";
@@ -32,7 +33,8 @@ import {
 } from "./lib/adminSession";
 import { loadCommunityPosts, saveCommunityPosts } from "./lib/communityStore";
 import { setMetaDescription } from "./lib/articleDocument";
-import { isEnglishLanguage, presentGuideCard, uiCopy } from "./lib/localeCopy";
+import { appLanguage } from "./i18n/i18n";
+import { presentGuideCard } from "./lib/localeCopy";
 import { usePortalRoute } from "./lib/usePortalRoute";
 import "./App.css";
 
@@ -46,11 +48,12 @@ function navActive(route) {
 
 export default function App() {
   const { route, go, adminGate, leaveAdminGate } = usePortalRoute();
+  const { t } = useTranslation();
+  const language = appLanguage();
   const [adminSession, setAdminSession] = useState(() => Boolean(readAdminToken()));
   const [loginOpen, setLoginOpen] = useState(false);
   const adminMode = adminSession;
   const [destination, setDestination] = useState("");
-  const [language, setLanguage] = useState("en");
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [guidesLoading, setGuidesLoading] = useState(true);
@@ -76,7 +79,7 @@ export default function App() {
       .catch((err) => {
         console.error("가이드 목록 로드 실패:", err);
         if (!cancelled) {
-          setGuidesError("Guides could not be loaded. Check that the API is running.");
+          setGuidesError("failed");
         }
       })
       .finally(() => {
@@ -106,10 +109,6 @@ export default function App() {
       cancelled = true;
     };
   }, [route.name, route.guideId, reloadToken]);
-
-  useEffect(() => {
-    document.documentElement.lang = isEnglishLanguage(language) ? "en" : "ko";
-  }, [language]);
 
   useEffect(() => {
     if (!adminMode) setAdminOpen(false);
@@ -162,38 +161,37 @@ export default function App() {
   };
 
   useEffect(() => {
-    const copy = uiCopy(language);
     const card = presentGuideCard(
       cards.find((item) => item.id === route.guideId),
       language,
     );
     if (route.name === "article") {
-      document.title = `${card?.title || "Guide"} · BlueLog Trip`;
-      setMetaDescription(card?.summary || copy.siteDescription);
+      document.title = t("meta.articleTitle", { title: card?.title || t("guide.articleTab") });
+      setMetaDescription(card?.summary || t("meta.siteDescription"));
       return;
     }
     const titles = {
-      home: "BlueLog Trip - Curated Local City Guides",
-      destinations: "Destinations · BlueLog Trip",
-      food: "Local Food · BlueLog Trip",
-      community: "Community & Viral Log · BlueLog Trip",
-      dashboard: "Dashboard · BlueLog Trip",
-      privacy: "Privacy Policy · BlueLog Trip",
-      terms: "Terms of Service · BlueLog Trip",
-      about: "About · BlueLog Trip",
-      contact: "Contact · BlueLog Trip",
-      notFound: "Page not found · BlueLog Trip",
+      home: t("meta.homeTitle"),
+      destinations: t("meta.destinationsTitle"),
+      food: t("meta.foodTitle"),
+      community: t("meta.communityTitle"),
+      dashboard: t("meta.dashboardTitle"),
+      privacy: t("meta.privacyTitle"),
+      terms: t("meta.termsTitle"),
+      about: t("meta.aboutTitle"),
+      contact: t("meta.contactTitle"),
+      notFound: t("meta.notFoundTitle"),
     };
     const descriptions = {
-      privacy: "How BlueLog Trip uses cookies, Google AdSense, third-party cookies, and the DART cookie.",
-      terms: "Terms of Service for reading and using BlueLog Trip city guides.",
-      about: "BlueLog Trip writes AI-assisted local city guides and checks them before publication.",
-      contact: "Contact BlueLog Trip at bluelog.official@gmail.com.",
-      notFound: "This page is not on BlueLog Trip. Return to the homepage.",
+      privacy: t("meta.privacyDescription"),
+      terms: t("meta.termsDescription"),
+      about: t("meta.aboutDescription"),
+      contact: t("meta.contactDescription"),
+      notFound: t("meta.notFoundDescription"),
     };
-    document.title = titles[route.name] || "BlueLog Trip - Curated Local City Guides";
-    setMetaDescription(descriptions[route.name] || copy.siteDescription);
-  }, [route, cards, language]);
+    document.title = titles[route.name] || t("meta.homeTitle");
+    setMetaDescription(descriptions[route.name] || t("meta.siteDescription"));
+  }, [route, cards, language, t]);
 
   const localizedCards = useMemo(
     () => cards.map((card) => presentGuideCard(card, language)),
@@ -246,18 +244,18 @@ export default function App() {
       });
       if (res.status === 401) {
         handleUnauthorized();
-        throw new Error(uiCopy(language).approveFailed);
+        throw new Error(t("status.approveFailedShort"));
       }
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.detail || uiCopy(language).approveFailed);
+        throw new Error(errorData.detail || t("status.approveFailedShort"));
       }
       const data = await res.json();
       setSelectedGuide(data);
-      setStatusMessage(uiCopy(language).statusApproved);
+      setStatusMessage(t("status.approved"));
       setReloadToken((token) => token + 1);
     } catch (err) {
-      setStatusMessage(uiCopy(language).statusApproveFailed(err.message));
+      setStatusMessage(t("status.approveFailed", { message: err.message }));
     } finally {
       setPublishing(false);
     }
@@ -279,18 +277,17 @@ export default function App() {
 
       if (res.status === 401) {
         handleUnauthorized();
-        throw new Error(uiCopy(language).generateFailed);
+        throw new Error(t("status.generateFailed"));
       }
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.detail || uiCopy(language).generateFailed);
+        throw new Error(errorData.detail || t("status.generateFailed"));
       }
 
       const data = await res.json();
       const qualityScore = data.qa_result?.quality_score;
-      const copy = uiCopy(language);
       setStatusMessage(
-        qualityScore == null ? copy.statusReady : copy.statusReadyScore(qualityScore),
+        qualityScore == null ? t("status.ready") : t("status.readyScore", { score: qualityScore }),
       );
       const newFileName = `${destination.trim().toLowerCase().replace(/\s+/g, "_")}_guide.md`;
       setDestination("");
@@ -299,7 +296,7 @@ export default function App() {
       go(`/guide/${encodeURIComponent(newFileName)}`);
       window.scrollTo({ top: 0 });
     } catch (err) {
-      setStatusMessage(uiCopy(language).statusFailed(err.message));
+      setStatusMessage(t("status.failed", { message: err.message }));
     } finally {
       setLoading(false);
     }
@@ -316,8 +313,6 @@ export default function App() {
         query={query}
         onQueryChange={setQuery}
         onSearch={handleSearch}
-        language={language}
-        onLanguageChange={setLanguage}
         onNavigate={go}
         onOpenAdmin={() => setAdminOpen(true)}
         onOpenDashboard={() => go("/dashboard")}
@@ -340,14 +335,13 @@ export default function App() {
           adminSession ? (
             <Dashboard onUnauthorized={handleUnauthorized} />
           ) : (
-            <p className="dash-note">관리자 로그인으로 이동합니다.</p>
+            <p className="dash-note">{t("admin.redirecting")}</p>
           )
         ) : route.name === "community" ? (
           <CommunityBoard
             posts={posts}
             query={query}
             onCreate={handleCreatePost}
-            language={language}
           />
         ) : route.name === "privacy" ? (
           <PrivacyPolicy />
@@ -376,14 +370,13 @@ export default function App() {
                   onBack={() => go("/")}
                   onOpenCommunity={() => go("/community")}
                   onNavigate={go}
-                  language={language}
                   adminMode={adminMode}
                 />
               ) : (
                 <ArticleGrid
                   cards={visibleCards}
                   loading={guidesLoading}
-                  error={guidesError}
+                  error={guidesError ? t("catalog.loadError") : ""}
                   onOpen={openGuide}
                 />
               )}
@@ -392,7 +385,6 @@ export default function App() {
               <PortalSidebar
                 cards={localizedCards}
                 posts={posts}
-                language={language}
                 onPickDestination={(name) => {
                   setQuery(name);
                   go("/");
@@ -416,7 +408,6 @@ export default function App() {
           onClose={() => setAdminOpen(false)}
           destination={destination}
           onDestinationChange={setDestination}
-          language={language}
           loading={loading}
           statusMessage={statusMessage}
           onSubmit={handleGenerate}

@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Compass, Menu, Search, X } from "lucide-react";
-import { uiCopy } from "../../lib/localeCopy";
+import { useTranslation } from "react-i18next";
+import i18n, { normalizeAppLanguage } from "../../i18n/i18n";
 
-const DESTINATIONS = [
-  { id: "all", label: "All regions", path: "/destinations" },
-  { id: "asia", label: "Asia", path: "/destinations/asia" },
-  { id: "europe", label: "Europe", path: "/destinations/europe" },
-  { id: "americas", label: "Americas", path: "/destinations/americas" },
+const DESTINATION_PATHS = [
+  { id: "all", labelKey: "nav.allRegions", path: "/destinations" },
+  { id: "asia", labelKey: "nav.asia", path: "/destinations/asia" },
+  { id: "europe", labelKey: "nav.europe", path: "/destinations/europe" },
+  { id: "americas", labelKey: "nav.americas", path: "/destinations/americas" },
 ];
 
 export default function GlobalNav({
@@ -15,8 +16,6 @@ export default function GlobalNav({
   query,
   onQueryChange,
   onSearch,
-  language,
-  onLanguageChange,
   onNavigate,
   onOpenAdmin,
   onOpenDashboard,
@@ -24,6 +23,8 @@ export default function GlobalNav({
   adminMode = false,
   dashboardActive = false,
 }) {
+  const { t } = useTranslation();
+  const language = normalizeAppLanguage(i18n.language);
   const [destOpen, setDestOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const destRef = useRef(null);
@@ -53,7 +54,11 @@ export default function GlobalNav({
     setMobileOpen(false);
     onNavigate(path);
   };
-  const copy = uiCopy(language);
+
+  const changeLanguage = (event) => {
+    const next = event.target.value === "ko" ? "ko" : "en";
+    i18n.changeLanguage(next);
+  };
 
   return (
     <header className="gnb">
@@ -67,19 +72,19 @@ export default function GlobalNav({
           type="button"
           className="menu-toggle"
           aria-expanded={mobileOpen}
-          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          aria-label={mobileOpen ? t("nav.closeMenu") : t("nav.openMenu")}
           onClick={() => setMobileOpen((open) => !open)}
         >
           {mobileOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
 
-        <nav className={mobileOpen ? "gnb-links open" : "gnb-links"} aria-label="Categories">
+        <nav className={mobileOpen ? "gnb-links open" : "gnb-links"} aria-label={t("nav.categories")}>
           <button
             type="button"
             className={active === "home" ? "nav-link active" : "nav-link"}
             onClick={() => visit("/")}
           >
-            Home
+            {t("nav.home")}
           </button>
 
           <div className="nav-dropdown" ref={destRef}>
@@ -90,12 +95,12 @@ export default function GlobalNav({
               aria-haspopup="true"
               onClick={() => setDestOpen((open) => !open)}
             >
-              Destinations
+              {t("nav.destinations")}
               <ChevronDown size={16} aria-hidden="true" />
             </button>
             {destOpen ? (
               <div className="dropdown-panel" role="menu">
-                {DESTINATIONS.map((item) => (
+                {DESTINATION_PATHS.map((item) => (
                   <button
                     key={item.id}
                     type="button"
@@ -103,7 +108,7 @@ export default function GlobalNav({
                     className={region === item.id ? "dropdown-item active" : "dropdown-item"}
                     onClick={() => visit(item.path)}
                   >
-                    {item.label}
+                    {t(item.labelKey)}
                   </button>
                 ))}
               </div>
@@ -115,14 +120,14 @@ export default function GlobalNav({
             className={active === "food" ? "nav-link active" : "nav-link"}
             onClick={() => visit("/local-food")}
           >
-            Local Food
+            {t("nav.localFood")}
           </button>
           <button
             type="button"
             className={active === "community" ? "nav-link active" : "nav-link"}
             onClick={() => visit("/community")}
           >
-            Community & Viral Log
+            {t("nav.community")}
           </button>
         </nav>
 
@@ -133,18 +138,18 @@ export default function GlobalNav({
               type="search"
               value={query}
               onChange={(event) => onQueryChange(event.target.value)}
-              placeholder="Search"
-              aria-label="Search guides"
+              placeholder={t("nav.searchPlaceholder")}
+              aria-label={t("nav.searchGuides")}
             />
           </form>
           <select
             className="lang-select"
             value={language}
-            aria-label={copy.languageLabel}
-            onChange={(event) => onLanguageChange(event.target.value)}
+            aria-label={t("language.label")}
+            onChange={changeLanguage}
           >
-            <option value="en">{copy.languageEnglish}</option>
-            <option value="ko">{copy.languageKorean}</option>
+            <option value="en">{t("language.en")}</option>
+            <option value="ko">{t("language.ko")}</option>
           </select>
           {adminMode ? (
             <>
@@ -153,13 +158,13 @@ export default function GlobalNav({
                 className={dashboardActive ? "dashboard-btn active" : "dashboard-btn"}
                 onClick={onOpenDashboard}
               >
-                Dashboard
+                {t("nav.dashboard")}
               </button>
               <button type="button" className="admin-btn" onClick={onOpenAdmin}>
-                Admin / Generator
+                {t("nav.admin")}
               </button>
               <button type="button" className="logout-btn" onClick={onLogout}>
-                Logout
+                {t("nav.logout")}
               </button>
             </>
           ) : null}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../lib/guideCards";
 
 let visitorRequest = null;
@@ -22,6 +23,7 @@ function loadVisitorCounts() {
 }
 
 export default function VisitorBadge() {
+  const { t } = useTranslation();
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
@@ -46,7 +48,7 @@ export default function VisitorBadge() {
   return (
     <div className="visitor-badge-row">
       <p className="visitor-badge" aria-live="polite">
-        Today: {today} / Total: {total}
+        {t("visitors.badge", { today, total })}
       </p>
     </div>
   );

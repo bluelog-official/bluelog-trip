@@ -88,12 +88,13 @@ export function latestViralLogs(posts, limit = 5) {
     .slice(0, limit);
 }
 
-export function formatPostDate(iso) {
+export function formatPostDate(iso, language = "en") {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return "";
-  return date.toLocaleDateString("en-GB", {
+  const korean = String(language || "").toLowerCase().startsWith("ko");
+  return date.toLocaleDateString(korean ? "ko-KR" : "en-GB", {
     day: "numeric",
-    month: "short",
+    month: korean ? "long" : "short",
     year: "numeric",
   });
 }

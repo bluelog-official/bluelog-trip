@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../../lib/guideCards";
 
-const LOGIN_ERROR = "잘못된 관리자 정보입니다";
-
 export default function AdminLogin({ onClose, onSuccess }) {
+  const { t } = useTranslation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -31,12 +31,12 @@ export default function AdminLogin({ onClose, onSuccess }) {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.access_token) {
-        setError(LOGIN_ERROR);
+        setError(t("login.error"));
         return;
       }
       onSuccess(data.access_token);
     } catch {
-      setError(LOGIN_ERROR);
+      setError(t("login.error"));
     } finally {
       setSubmitting(false);
     }
@@ -44,20 +44,20 @@ export default function AdminLogin({ onClose, onSuccess }) {
 
   return (
     <div className="login-root">
-      <button type="button" className="login-backdrop" aria-label="Close admin login" onClick={onClose} />
+      <button type="button" className="login-backdrop" aria-label={t("login.closeBackdrop")} onClick={onClose} />
       <section className="login-card" role="dialog" aria-modal="true" aria-labelledby="admin-login-title">
         <header className="login-header">
           <div>
-            <p className="login-kicker">BlueLog</p>
-            <h2 id="admin-login-title">Admin Login</h2>
+            <p className="login-kicker">{t("login.kicker")}</p>
+            <h2 id="admin-login-title">{t("login.title")}</h2>
           </div>
-          <button type="button" className="login-close" onClick={onClose} aria-label="Close">
+          <button type="button" className="login-close" onClick={onClose} aria-label={t("login.close")}>
             <X size={18} />
           </button>
         </header>
         <form className="login-form" onSubmit={handleSubmit}>
           <label className="login-label" htmlFor="admin-username">
-            ID
+            {t("login.id")}
           </label>
           <input
             id="admin-username"
@@ -72,7 +72,7 @@ export default function AdminLogin({ onClose, onSuccess }) {
             spellCheck={false}
           />
           <label className="login-label" htmlFor="admin-password">
-            Password
+            {t("login.password")}
           </label>
           <input
             id="admin-password"
@@ -90,7 +90,7 @@ export default function AdminLogin({ onClose, onSuccess }) {
             </p>
           ) : null}
           <button type="submit" className="login-submit" disabled={submitting}>
-            {submitting ? "Signing in..." : "Log in"}
+            {submitting ? t("login.submitting") : t("login.submit")}
           </button>
         </form>
       </section>

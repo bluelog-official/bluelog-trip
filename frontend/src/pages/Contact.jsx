@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
 
 const CONTACT_EMAIL = "bluelog.official@gmail.com";
+const MAIL = { mail: <a href={`mailto:${CONTACT_EMAIL}`} /> };
 
 export default function Contact() {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -10,32 +13,30 @@ export default function Contact() {
 
   const onSubmit = (event) => {
     event.preventDefault();
-    const subject = encodeURIComponent(`[BlueLog Trip] Inquiry from ${name}`);
-    const body = encodeURIComponent(`Name: ${name}\nReply-to: ${email}\n\n${message}`);
+    const subject = encodeURIComponent(t("contact.subject", { name }));
+    const body = encodeURIComponent(t("contact.bodyHeader", { name, email, message }));
     window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
-    setNotice(`Your email app should open a message to ${CONTACT_EMAIL}. If it does not, send the same note directly.`);
+    setNotice(t("contact.notice", { email: CONTACT_EMAIL }));
   };
 
   return (
     <article className="policy-page">
-      <p className="policy-kicker">BlueLog Trip</p>
-      <h1>Contact</h1>
-      <p className="policy-updated">We read every note sent to the desk.</p>
+      <p className="policy-kicker">{t("contact.kicker")}</p>
+      <h1>{t("contact.title")}</h1>
+      <p className="policy-updated">{t("contact.updated")}</p>
 
       <section>
-        <h2>Email the desk</h2>
+        <h2>{t("contact.emailTitle")}</h2>
         <p>
-          Guide corrections, missing neighborhoods, advertising questions, and privacy requests can be sent to{" "}
-          <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Include the city and the guide title when
-          you are writing about a published page.
+          <Trans i18nKey="contact.emailBody" values={{ email: CONTACT_EMAIL }} components={MAIL} />
         </p>
       </section>
 
       <form className="contact-form" onSubmit={onSubmit}>
-        <h2>Send an inquiry</h2>
-        <p>This form opens your email app with the message already addressed to {CONTACT_EMAIL}.</p>
+        <h2>{t("contact.formTitle")}</h2>
+        <p>{t("contact.formHelp", { email: CONTACT_EMAIL })}</p>
         <label className="contact-label" htmlFor="contact-name">
-          Name
+          {t("contact.name")}
         </label>
         <input
           id="contact-name"
@@ -48,7 +49,7 @@ export default function Contact() {
           onChange={(event) => setName(event.target.value)}
         />
         <label className="contact-label" htmlFor="contact-email">
-          Your email
+          {t("contact.email")}
         </label>
         <input
           id="contact-email"
@@ -61,7 +62,7 @@ export default function Contact() {
           onChange={(event) => setEmail(event.target.value)}
         />
         <label className="contact-label" htmlFor="contact-message">
-          Message
+          {t("contact.message")}
         </label>
         <textarea
           id="contact-message"
@@ -73,7 +74,7 @@ export default function Contact() {
           onChange={(event) => setMessage(event.target.value)}
         />
         <button type="submit" className="contact-submit">
-          Send inquiry
+          {t("contact.submit")}
         </button>
         {notice ? (
           <p className="contact-notice" role="status">

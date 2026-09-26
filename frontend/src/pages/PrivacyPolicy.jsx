@@ -1,100 +1,71 @@
+import { Trans, useTranslation } from "react-i18next";
+
 const CONTACT_EMAIL = "bluelog.official@gmail.com";
+const ADS_URL = "https://policies.google.com/technologies/ads";
+const SETTINGS_URL = "https://adssettings.google.com";
+const CHOICES_URL = "https://www.aboutads.info/choices";
+const EEA_URL = "https://www.youronlinechoices.eu";
+const MAIL = { mail: <a href={`mailto:${CONTACT_EMAIL}`} /> };
 
 export default function PrivacyPolicy() {
+  const { t } = useTranslation();
+
   return (
     <article className="policy-page">
-      <p className="policy-kicker">BlueLog Trip</p>
-      <h1>Privacy Policy</h1>
-      <p className="policy-updated">Last updated September 26, 2026</p>
+      <p className="policy-kicker">{t("privacy.kicker")}</p>
+      <h1>{t("privacy.title")}</h1>
+      <p className="policy-updated">{t("privacy.updated")}</p>
 
       <section>
-        <h2>Who we are</h2>
-        <p>
-          BlueLog Trip publishes city walking routes, neighborhood food notes, and community trip logs.
-          This policy explains what the site collects and how advertising partners, including Google, may use cookies.
-        </p>
+        <h2>{t("privacy.whoTitle")}</h2>
+        <p>{t("privacy.whoBody")}</p>
       </section>
 
       <section>
-        <h2>Information we collect</h2>
-        <p>
-          When you search, open a guide, or send a contact message, the site may process the text you submit,
-          basic device and browser data, and the pages you view. We use that information to show guides, keep
-          the site working, and understand which pages are useful.
-        </p>
-        <p>
-          A visitor counter stores a salted hash of your IP address so the same browser is counted once per day.
-          We do not sell personal information, and you do not need an account to read published guides.
-        </p>
+        <h2>{t("privacy.collectTitle")}</h2>
+        <p>{t("privacy.collect1")}</p>
+        <p>{t("privacy.collect2")}</p>
       </section>
 
       <section id="cookies">
-        <h2>Cookies and third-party cookies</h2>
-        <p>
-          BlueLog Trip uses essential cookies and local storage for interface choices, such as a draft community
-          log kept in your browser. Those tools are not used by themselves to build an advertising profile.
-        </p>
-        <p>
-          Third-party vendors, including Google, use cookies to serve ads based on a user&apos;s prior visits to
-          this website or other websites. Third-party advertising partners may also use web beacons and similar
-          technologies to recognize your browser across sites. BlueLog Trip does not control the cookies those
-          partners set.
-        </p>
-        <p>
-          Google&apos;s use of advertising cookies enables it and its partners to serve ads to users based on
-          their visit to this site and other sites on the Internet. Those cookies may collect or receive
-          information from your browser, including a cookie identifier, IP address, browser type, and pages
-          viewed, and use that information to provide advertisements and to measure ad performance.
-        </p>
+        <h2>{t("privacy.cookiesTitle")}</h2>
+        <p>{t("privacy.cookies1")}</p>
+        <p>{t("privacy.cookies2")}</p>
+        <p>{t("privacy.cookies3")}</p>
       </section>
 
       <section id="adsense">
-        <h2>Google AdSense and the DART cookie</h2>
+        <h2>{t("privacy.adsenseTitle")}</h2>
+        <p>{t("privacy.adsense1")}</p>
         <p>
-          This site is supported by advertising, including Google AdSense. Google, as a third-party vendor, uses
-          cookies to serve ads on BlueLog Trip.
+          <Trans
+            i18nKey="privacy.adsense2"
+            values={{ adsUrl: ADS_URL }}
+            components={{ ads: <a href={ADS_URL} rel="noopener noreferrer" /> }}
+          />
         </p>
         <p>
-          Google&apos;s use of the DART cookie enables it to serve ads to visitors based on their visit to this
-          site and other sites on the Internet. Visitors may opt out of the use of the DART cookie by visiting
-          the Google ad and content network privacy policy at{" "}
-          <a href="https://policies.google.com/technologies/ads" rel="noopener noreferrer">
-            https://policies.google.com/technologies/ads
-          </a>
-          .
-        </p>
-        <p>
-          You may opt out of personalized advertising by visiting Google Ads Settings at{" "}
-          <a href="https://adssettings.google.com" rel="noopener noreferrer">
-            https://adssettings.google.com
-          </a>
-          . You can also opt out of some third-party vendors&apos; use of cookies for personalized advertising
-          by visiting{" "}
-          <a href="https://www.aboutads.info/choices" rel="noopener noreferrer">
-            https://www.aboutads.info/choices
-          </a>{" "}
-          or, in the European Economic Area,{" "}
-          <a href="https://www.youronlinechoices.eu" rel="noopener noreferrer">
-            https://www.youronlinechoices.eu
-          </a>
-          . Browser settings can block cookies. Blocking cookies may limit some site features and will not
-          remove all advertising.
+          <Trans
+            i18nKey="privacy.adsense3"
+            values={{ settingsUrl: SETTINGS_URL, choicesUrl: CHOICES_URL, eeaUrl: EEA_URL }}
+            components={{
+              settings: <a href={SETTINGS_URL} rel="noopener noreferrer" />,
+              choices: <a href={CHOICES_URL} rel="noopener noreferrer" />,
+              eea: <a href={EEA_URL} rel="noopener noreferrer" />,
+            }}
+          />
         </p>
       </section>
 
       <section>
-        <h2>Other third parties</h2>
-        <p>
-          Guides may link to maps, photos, or external sites. Those sites have their own privacy practices. A
-          link from BlueLog Trip is not an endorsement of that site&apos;s data handling.
-        </p>
+        <h2>{t("privacy.othersTitle")}</h2>
+        <p>{t("privacy.othersBody")}</p>
       </section>
 
       <section>
-        <h2>Contact</h2>
+        <h2>{t("privacy.contactTitle")}</h2>
         <p>
-          Questions about this policy can be sent to{" "}
-          <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+          <Trans i18nKey="privacy.contactBody" values={{ email: CONTACT_EMAIL }} components={MAIL} />
         </p>
       </section>
     </article>

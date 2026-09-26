@@ -1,7 +1,7 @@
+import { useTranslation } from "react-i18next";
 import GuideArticle from "./GuideArticle";
 import ViralExport from "../ViralExport";
 import { readGuideApproved } from "../adSlotPlan";
-import { uiCopy } from "../../lib/localeCopy";
 
 export default function ArticleReader({
   guide,
@@ -13,13 +13,12 @@ export default function ArticleReader({
   onBack,
   onOpenCommunity,
   onNavigate,
-  language,
   adminMode = false,
 }) {
-  const copy = uiCopy(language);
+  const { t } = useTranslation();
 
   if (!guide) {
-    return <p className="grid-empty">{copy.loadingGuide}</p>;
+    return <p className="grid-empty">{t("guide.loading")}</p>;
   }
 
   const approved = readGuideApproved(guide);
@@ -27,21 +26,20 @@ export default function ArticleReader({
   return (
     <div className="detail-panel">
       <button type="button" className="back-link" onClick={onBack}>
-        ← {copy.back}
+        ← {t("guide.back")}
       </button>
       {tab === "article" ? (
         <GuideArticle
           guide={guide}
           fileName={fileName}
-          language={language}
           onNavigate={onNavigate}
         />
       ) : null}
       {adminMode ? (
         <div className="review-bar">
           <div>
-            <strong>{approved ? copy.reviewApproved : copy.reviewPending}</strong>
-            <p>{approved ? copy.reviewApprovedHelp : copy.reviewPendingHelp}</p>
+            <strong>{approved ? t("guide.reviewApproved") : t("guide.reviewPending")}</strong>
+            <p>{approved ? t("guide.reviewApprovedHelp") : t("guide.reviewPendingHelp")}</p>
           </div>
           <button
             type="button"
@@ -49,7 +47,7 @@ export default function ArticleReader({
             onClick={onApprove}
             disabled={approved || publishing}
           >
-            {publishing ? copy.publishing : copy.approve}
+            {publishing ? t("guide.publishing") : t("guide.approve")}
           </button>
         </div>
       ) : null}
@@ -62,7 +60,7 @@ export default function ArticleReader({
             className={tab === "article" ? "detail-tab active" : "detail-tab"}
             onClick={() => onTabChange("article")}
           >
-            Article
+            {t("guide.articleTab")}
           </button>
           <button
             type="button"
@@ -71,15 +69,15 @@ export default function ArticleReader({
             className={tab === "viral" ? "detail-tab active" : "detail-tab"}
             onClick={() => onTabChange("viral")}
           >
-            Viral Export
+            {t("guide.viralTab")}
           </button>
         </div>
         <button type="button" className="text-link" onClick={onOpenCommunity}>
-          Open Community & Viral Log
+          {t("guide.openCommunity")}
         </button>
       </div>
       {tab === "viral" ? (
-        <ViralExport syndication={guide.syndication} language={language} />
+        <ViralExport syndication={guide.syndication} />
       ) : null}
     </div>
   );

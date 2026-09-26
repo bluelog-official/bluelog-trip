@@ -107,5 +107,9 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   return {
     plugins: [pureSitemapPlugin(env), react()],
+    test: {
+      environment: "jsdom",
+      globals: false,
+    },
   };
 });

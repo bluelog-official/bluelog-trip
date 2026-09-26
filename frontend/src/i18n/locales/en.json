@@ -1,0 +1,383 @@
+{
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "ko": "Korean"
+  },
+  "nav": {
+    "home": "Home",
+    "destinations": "Destinations",
+    "allRegions": "All regions",
+    "asia": "Asia",
+    "europe": "Europe",
+    "americas": "Americas",
+    "oceania": "Oceania",
+    "localFood": "Local Food",
+    "community": "Community & Viral Log",
+    "searchPlaceholder": "Search",
+    "searchGuides": "Search guides",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "categories": "Categories",
+    "dashboard": "Dashboard",
+    "admin": "Admin / Generator",
+    "logout": "Logout"
+  },
+  "footer": {
+    "brand": "Brand",
+    "tagline": "City routes and neighborhood food guides, checked before they go live.",
+    "navigation": "Navigation",
+    "navLabel": "Footer navigation",
+    "legalHeading": "Legal & Policies",
+    "legalLabel": "Legal and policies",
+    "supportHeading": "Support & Search",
+    "supportLabel": "Support",
+    "requiredLinks": "Required site links",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "cookie": "Cookie Policy",
+    "about": "About",
+    "editorial": "Editorial Policy",
+    "contact": "Contact",
+    "sitemap": "Sitemap",
+    "home": "Home",
+    "destinations": "Destinations",
+    "asia": "Asia",
+    "europe": "Europe",
+    "americas": "Americas",
+    "localFood": "Local Food",
+    "community": "Community Log",
+    "copyright": "Copyright ⓒ 2026 BlueLog Trip. All rights reserved."
+  },
+  "hero": {
+    "kicker": "Global trip desk",
+    "title": "Find Local Trip & Food Guides",
+    "copy": "City routes, neighborhood meals, and guides that passed QA before they go live.",
+    "placeholder": "Try Paris, ramen, Bali…",
+    "search": "Search"
+  },
+  "categories": {
+    "all": {
+      "kicker": "Destinations",
+      "title": "All regions",
+      "text": "City guides across Asia, Europe, and the Americas."
+    },
+    "asia": {
+      "kicker": "Destinations",
+      "title": "Asia",
+      "text": "Temples, islands, night markets, and the meals around them."
+    },
+    "europe": {
+      "kicker": "Destinations",
+      "title": "Europe",
+      "text": "City breaks, museum timing, and neighborhood tables."
+    },
+    "americas": {
+      "kicker": "Destinations",
+      "title": "Americas",
+      "text": "Coast-to-coast walks and the local plates along the way."
+    },
+    "food": {
+      "kicker": "Local Food",
+      "title": "Eat with the neighborhood",
+      "text": "Named stalls, budget meals, and the prices guides actually list."
+    }
+  },
+  "catalog": {
+    "loading": "Loading guides",
+    "empty": "No guides in this view yet.",
+    "loadError": "Guides could not be loaded. Check that the API is running.",
+    "verified": "Verified Guide",
+    "checked": "Checked by Local AI"
+  },
+  "sidebar": {
+    "highlights": "Highlights",
+    "popularTitle": "Top 5 destinations",
+    "popularEmpty": "Guides will rank here after they are generated.",
+    "viralTitle": "Latest viral logs",
+    "viralEmpty": "Performance notes will show up after the first post."
+  },
+  "guide": {
+    "back": "All guides",
+    "toc": "On this page",
+    "sources": "Sources",
+    "published": "Published",
+    "author": "BlueLog Local AI",
+    "verified": "Verified Guide",
+    "checked": "Checked by Local AI",
+    "loading": "Loading this guide…",
+    "missing": "This guide is not available yet.",
+    "breadcrumb": "Breadcrumb",
+    "articleTab": "Article",
+    "viralTab": "Viral Export",
+    "openCommunity": "Open Community & Viral Log",
+    "reviewPending": "Awaiting review",
+    "reviewApproved": "QA Approved",
+    "reviewPendingHelp": "This draft stays unpublished until it is approved.",
+    "reviewApprovedHelp": "This guide is published.",
+    "publishing": "Publishing...",
+    "approve": "Approve & Publish"
+  },
+  "viral": {
+    "empty": "This guide has no export copy yet.",
+    "reddit": "Reddit",
+    "quora": "Quora",
+    "pinterest": "Pinterest",
+    "backlink": "Backlink",
+    "teasers": "Social teasers",
+    "hashtags": "Hashtags",
+    "altPrefix": "alt",
+    "copy": "Copy",
+    "copied": "Copied"
+  },
+  "community": {
+    "kicker": "Community & Viral Log",
+    "title": "Community board",
+    "lead": "Share a Reddit, Quora, or Pinterest result, or leave a tip for the next guide.",
+    "tabsLabel": "Viral log categories",
+    "write": "Write a log",
+    "name": "Name",
+    "namePlaceholder": "Traveler",
+    "traveler": "Traveler",
+    "desk": "BlueLog Desk",
+    "channel": "Channel",
+    "titleField": "Title",
+    "titlePlaceholder": "What worked",
+    "result": "Result",
+    "resultPlaceholder": "1.2k upvotes, optional",
+    "note": "Note",
+    "notePlaceholder": "What you posted, and what the guide should change next time.",
+    "required": "Title and note are required.",
+    "submit": "Post to the board",
+    "empty": "No logs on this tab yet.",
+    "tabs": {
+      "all": "All",
+      "reddit": "Reddit",
+      "quora": "Quora",
+      "pinterest": "Pinterest",
+      "tip": "Guide Tips"
+    },
+    "labels": {
+      "reddit": "Reddit",
+      "quora": "Quora",
+      "pinterest": "Pinterest",
+      "tip": "Guide Tip"
+    },
+    "channels": {
+      "reddit": "Reddit performance",
+      "quora": "Quora performance",
+      "pinterest": "Pinterest performance",
+      "tip": "Guide tip"
+    },
+    "seeds": {
+      "seed-reddit-kyoto": {
+        "title": "r/JapanTravel night-bus note cleared 1.2k upvotes",
+        "metric": "1.2k upvotes",
+        "body": "The Kyoto guide's last-train timing was posted as a first-person note, not a promo. The guide link sat in the second paragraph after the station name. Most clicks came from a comment that asked for the map, so the next draft should lead with the concrete time."
+      },
+      "seed-quora-paris": {
+        "title": "Quora answer on a 3-day Paris plan kept sending readers to the Louvre section",
+        "metric": "640 views",
+        "body": "The question was whether three days is enough. The answer used the guide's day-by-day split and named ticket prices before the link. Readers who wanted the Mona Lisa line tip opened the full guide."
+      },
+      "seed-pinterest-bali": {
+        "title": "Ubud rice-terrace pin passed 8.6k saves",
+        "metric": "8.6k saves",
+        "body": "The pin used the terrace photo already in the Bali guide, with alt text that names Ubud. The board is Island Food and Temples. The description stays under two sentences and ends on the guide path."
+      },
+      "seed-tip-table": {
+        "title": "Put the local price table above the first food heading",
+        "metric": "",
+        "body": "Guides that open the meal section with a price table hold readers longer than guides that start with a scenery paragraph. Keep three rows: dish, place, and a local price. That block is also the easiest piece to reuse in a Quora answer."
+      }
+    }
+  },
+  "admin": {
+    "note": "Writing language follows the top bar. Current:",
+    "languageName": "English (Global SEO)",
+    "destination": "Destination",
+    "placeholder": "Example: Rome, Bali, New York",
+    "generating": "Generating...",
+    "submit": "Generate guide",
+    "close": "Close generator",
+    "closeButton": "Close",
+    "kicker": "Admin",
+    "title": "Generator",
+    "redirecting": "Taking you to the admin login."
+  },
+  "login": {
+    "closeBackdrop": "Close admin login",
+    "close": "Close",
+    "kicker": "BlueLog",
+    "title": "Admin Login",
+    "id": "ID",
+    "password": "Password",
+    "error": "Those admin details are not valid.",
+    "submitting": "Signing in...",
+    "submit": "Log in"
+  },
+  "status": {
+    "ready": "Guide created.",
+    "readyScore": "Guide created. QA score: {{score}}.",
+    "failed": "Could not create the guide. {{message}}",
+    "approved": "Review complete. Sitemap updated and search engines were pinged.",
+    "approveFailed": "Could not approve the guide. {{message}}",
+    "approveFailedShort": "Approval failed.",
+    "generateFailed": "Guide generation failed."
+  },
+  "meta": {
+    "siteDescription": "BlueLog Trip - Curated Local City Guides",
+    "homeTitle": "BlueLog Trip - Curated Local City Guides",
+    "destinationsTitle": "Destinations · BlueLog Trip",
+    "foodTitle": "Local Food · BlueLog Trip",
+    "communityTitle": "Community & Viral Log · BlueLog Trip",
+    "dashboardTitle": "Dashboard · BlueLog Trip",
+    "privacyTitle": "Privacy Policy · BlueLog Trip",
+    "privacyDescription": "How BlueLog Trip uses cookies, Google AdSense, third-party cookies, and the DART cookie.",
+    "termsTitle": "Terms of Service · BlueLog Trip",
+    "termsDescription": "Terms of Service for reading and using BlueLog Trip city guides.",
+    "aboutTitle": "About · BlueLog Trip",
+    "aboutDescription": "BlueLog Trip writes AI-assisted local city guides and checks them before publication.",
+    "contactTitle": "Contact · BlueLog Trip",
+    "contactDescription": "Contact BlueLog Trip at bluelog.official@gmail.com.",
+    "notFoundTitle": "Page not found · BlueLog Trip",
+    "notFoundDescription": "This page is not on BlueLog Trip. Return to the homepage.",
+    "articleTitle": "{{title}} · BlueLog Trip"
+  },
+  "ads": {
+    "label": "Sponsored Content",
+    "kicker": "Sponsored Content",
+    "placeholder": "Advertisement space reserved for a responsive Google AdSense unit.",
+    "liveLabel": "Advertisement"
+  },
+  "visitors": {
+    "badge": "Today: {{today}} / Total: {{total}}"
+  },
+  "notFound": {
+    "kicker": "404",
+    "title": "Page not found",
+    "body": "That address is not a BlueLog Trip guide or policy page.",
+    "home": "Back to the homepage"
+  },
+  "about": {
+    "kicker": "BlueLog Trip",
+    "title": "About BlueLog Trip",
+    "updated": "Last updated September 26, 2026",
+    "missionTitle": "Our mission",
+    "mission1": "BlueLog Trip is an AI-assisted local guide desk. We research a city, draft a walkable route and neighborhood food notes, then check the guide before it is published for readers planning a walk, a meal, or a short stay.",
+    "mission2": "The desk covers Asia, Europe, and the Americas. We write original guides for people on the ground. We are not a booking cart, and we do not scrape other sites and republish their pages.",
+    "trustTitle": "Experience, expertise, and trust",
+    "trust1": "Each guide starts from local research collected by our own AI data engine, then passes an editorial check. A guide marked Verified Guide has been reviewed for publication. A guide marked Checked by Local AI has been read by that checking process and may still be waiting for a final publish step.",
+    "trust2": "Prices, opening hours, and transit rules still belong to the venue or the city. We say so in the guide and ask readers to confirm them on site. Factual corrections are welcome at <mail>{{email}}</mail>.",
+    "trust3": "Advertising, including Google AdSense, may appear on published pages. Ads do not change the route we recommend. How cookies are used is explained in the Privacy Policy.",
+    "contactTitle": "Who to write to",
+    "contactBody": "Editorial questions, missing neighborhoods, and privacy requests go to the same desk: <mail>{{email}}</mail>. Include the city and the guide title so we can open the published page."
+  },
+  "privacy": {
+    "kicker": "BlueLog Trip",
+    "title": "Privacy Policy",
+    "updated": "Last updated September 26, 2026",
+    "whoTitle": "Who we are",
+    "whoBody": "BlueLog Trip publishes city walking routes, neighborhood food notes, and community trip logs. This policy explains what the site collects and how advertising partners, including Google, may use cookies.",
+    "collectTitle": "Information we collect",
+    "collect1": "When you search, open a guide, or send a contact message, the site may process the text you submit, basic device and browser data, and the pages you view. We use that information to show guides, keep the site working, and understand which pages are useful.",
+    "collect2": "A visitor counter stores a salted hash of your IP address so the same browser is counted once per day. We do not sell personal information, and you do not need an account to read published guides.",
+    "cookiesTitle": "Cookies and third-party cookies",
+    "cookies1": "BlueLog Trip uses essential cookies and local storage for interface choices, such as a draft community log kept in your browser. Those tools are not used by themselves to build an advertising profile.",
+    "cookies2": "Third-party vendors, including Google, use cookies to serve ads based on a user's prior visits to this website or other websites. Third-party advertising partners may also use web beacons and similar technologies to recognize your browser across sites. BlueLog Trip does not control the cookies those partners set.",
+    "cookies3": "Google's use of advertising cookies enables it and its partners to serve ads to users based on their visit to this site and other sites on the Internet. Those cookies may collect or receive information from your browser, including a cookie identifier, IP address, browser type, and pages viewed, and use that information to provide advertisements and to measure ad performance.",
+    "adsenseTitle": "Google AdSense and the DART cookie",
+    "adsense1": "This site is supported by advertising, including Google AdSense. Google, as a third-party vendor, uses cookies to serve ads on BlueLog Trip.",
+    "adsense2": "Google's use of the DART cookie enables it to serve ads to visitors based on their visit to this site and other sites on the Internet. Visitors may opt out of the use of the DART cookie by visiting the Google ad and content network privacy policy at <ads>{{adsUrl}}</ads>.",
+    "adsense3": "You may opt out of personalized advertising by visiting Google Ads Settings at <settings>{{settingsUrl}}</settings>. You can also opt out of some third-party vendors' use of cookies for personalized advertising by visiting <choices>{{choicesUrl}}</choices> or, in the European Economic Area, <eea>{{eeaUrl}}</eea>. Browser settings can block cookies. Blocking cookies may limit some site features and will not remove all advertising.",
+    "othersTitle": "Other third parties",
+    "othersBody": "Guides may link to maps, photos, or external sites. Those sites have their own privacy practices. A link from BlueLog Trip is not an endorsement of that site's data handling.",
+    "contactTitle": "Contact",
+    "contactBody": "Questions about this policy can be sent to <mail>{{email}}</mail>."
+  },
+  "terms": {
+    "kicker": "BlueLog Trip",
+    "title": "Terms of Service",
+    "updated": "Last updated September 26, 2026",
+    "useTitle": "Using the site",
+    "use1": "These terms cover your use of BlueLog Trip, including city guides, community logs, and the pages linked from the site footer. By using the site you agree to these terms. If you do not agree, please do not use the site.",
+    "use2": "BlueLog Trip provides travel writing for general information. Guides are not a booking service, a tour operator, or professional safety, medical, or legal advice. Routes, prices, hours, and local rules change. Confirm details with the venue or local authority before you travel.",
+    "postsTitle": "Your posts",
+    "postsBody": "Community logs you submit should be your own words. Do not post content that is unlawful, misleading, or that infringes someone else's rights. We may remove a post that breaks these terms.",
+    "contentTitle": "Our content",
+    "contentBody": "Guides, layout, and the BlueLog Trip name are owned by BlueLog Trip unless a credit says otherwise. You may share a link to a published guide. You may not copy the site wholesale or present our guides as your own commercial product.",
+    "adsTitle": "Advertising",
+    "adsBody": "Some pages display third-party advertisements, including Google AdSense. Advertisers are responsible for their own offers. A displayed ad is not a recommendation from BlueLog Trip.",
+    "liabilityTitle": "Liability",
+    "liabilityBody": "The site is provided as available. To the extent the law allows, BlueLog Trip is not liable for travel decisions you make from a guide, for third-party ads, or for interruptions in the service.",
+    "contactTitle": "Contact",
+    "contactBody": "Questions about these terms can be sent to <mail>{{email}}</mail>."
+  },
+  "contact": {
+    "kicker": "BlueLog Trip",
+    "title": "Contact",
+    "updated": "We read every note sent to the desk.",
+    "emailTitle": "Email the desk",
+    "emailBody": "Guide corrections, missing neighborhoods, advertising questions, and privacy requests can be sent to <mail>{{email}}</mail>. Include the city and the guide title when you are writing about a published page.",
+    "formTitle": "Send an inquiry",
+    "formHelp": "This form opens your email app with the message already addressed to {{email}}.",
+    "name": "Name",
+    "email": "Your email",
+    "message": "Message",
+    "submit": "Send inquiry",
+    "subject": "[BlueLog Trip] Inquiry from {{name}}",
+    "bodyHeader": "Name: {{name}}\nReply-to: {{email}}\n\n{{message}}",
+    "notice": "Your email app should open a message to {{email}}. If it does not, send the same note directly."
+  },
+  "dashboard": {
+    "title": "Operations dashboard",
+    "lead": "Review site content, the QA gate, and the Python batch from one screen.",
+    "trigger": "Run manual batch",
+    "triggerRunning": "Batch running...",
+    "totalContent": "All content",
+    "autoPublish": "Auto-published at 75+",
+    "pendingHold": "Waiting for review",
+    "batchStatus": "Batch bot status",
+    "noRecord": "No record yet",
+    "healthLabel": "Agent pipeline health",
+    "healthTitle": "Agent pipeline",
+    "recentGuides": "Recently created guides",
+    "city": "City",
+    "qaScore": "QA score",
+    "publishState": "Publish state",
+    "createdAt": "Created",
+    "action": "Action",
+    "loading": "Loading...",
+    "noGuides": "No guides have been created.",
+    "published": "Published",
+    "held": "On hold",
+    "approved": "Approved",
+    "approve": "Approve",
+    "marketingLabel": "Marketing alerts",
+    "marketingTitle": "Marketing alerts",
+    "noDrafts": "No saved Reddit drafts.",
+    "copied": "Copied",
+    "copy": "Copy to clipboard",
+    "dismissing": "Working...",
+    "dismiss": "Mark reviewed",
+    "batchFailed": "The batch did not run.",
+    "batchDone": "The manual batch finished.",
+    "approveFailed": "Approval failed.",
+    "approvedNotice": "Approved the {{filename}} guide.",
+    "statsFailed": "Dashboard stats could not be loaded.",
+    "copyFailed": "Could not copy to the clipboard.",
+    "dismissFailed": "Could not clear the marketing alert.",
+    "dismissed": "The marketing draft was marked reviewed.",
+    "statusSuccess": "Success",
+    "statusRunning": "Running",
+    "statusFailed": "Failed",
+    "healthOk": "OK",
+    "healthDown": "Down",
+    "pipeline": {
+      "research": "Research",
+      "writer": "Writer",
+      "qa": "QA",
+      "syndication": "Syndication"
+    }
+  }
+}

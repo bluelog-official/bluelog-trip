@@ -1,12 +1,5 @@
 import { Compass } from "lucide-react";
-
-const LEGAL_LINKS = [
-  { href: "/privacy", label: "Privacy Policy" },
-  { href: "/terms", label: "Terms of Service" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
-  { href: "/sitemap.xml", label: "Sitemap" },
-];
+import { useTranslation } from "react-i18next";
 
 function FooterLink({ href, onNavigate, children, external = false }) {
   if (external) {
@@ -38,91 +31,97 @@ function FooterLink({ href, onNavigate, children, external = false }) {
 }
 
 export default function Footer({ onNavigate }) {
+  const { t } = useTranslation();
   const visit = (path) => {
     onNavigate(path);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  const legalLinks = [
+    { href: "/privacy", label: t("footer.privacy") },
+    { href: "/terms", label: t("footer.terms") },
+    { href: "/about", label: t("footer.about") },
+    { href: "/contact", label: t("footer.contact") },
+    { href: "/sitemap.xml", label: t("footer.sitemap") },
+  ];
 
   return (
     <footer className="portal-footer">
       <div className="footer-grid">
-        <section className="footer-brand" aria-label="Brand">
+        <section className="footer-brand" aria-label={t("footer.brand")}>
           <button type="button" className="footer-logo" onClick={() => visit("/")}>
             <Compass size={22} aria-hidden="true" />
             <span>BlueLog Trip</span>
           </button>
-          <p className="footer-tagline">
-            City routes and neighborhood food guides, checked before they go live.
-          </p>
+          <p className="footer-tagline">{t("footer.tagline")}</p>
         </section>
 
-        <nav className="footer-col" aria-label="Footer navigation">
-          <p className="footer-heading">Navigation</p>
+        <nav className="footer-col" aria-label={t("footer.navLabel")}>
+          <p className="footer-heading">{t("footer.navigation")}</p>
           <ul className="footer-links">
             <li>
-              <button type="button" onClick={() => visit("/")}>Home</button>
+              <button type="button" onClick={() => visit("/")}>{t("footer.home")}</button>
             </li>
             <li>
-              <button type="button" onClick={() => visit("/destinations")}>Destinations</button>
+              <button type="button" onClick={() => visit("/destinations")}>{t("footer.destinations")}</button>
               <ul className="footer-sublinks">
                 <li>
-                  <button type="button" onClick={() => visit("/destinations/asia")}>Asia</button>
+                  <button type="button" onClick={() => visit("/destinations/asia")}>{t("footer.asia")}</button>
                 </li>
                 <li>
-                  <button type="button" onClick={() => visit("/destinations/europe")}>Europe</button>
+                  <button type="button" onClick={() => visit("/destinations/europe")}>{t("footer.europe")}</button>
                 </li>
                 <li>
-                  <button type="button" onClick={() => visit("/destinations/americas")}>Americas</button>
+                  <button type="button" onClick={() => visit("/destinations/americas")}>{t("footer.americas")}</button>
                 </li>
               </ul>
             </li>
             <li>
-              <button type="button" onClick={() => visit("/local-food")}>Local Food</button>
+              <button type="button" onClick={() => visit("/local-food")}>{t("footer.localFood")}</button>
             </li>
             <li>
-              <button type="button" onClick={() => visit("/community")}>Community Log</button>
-            </li>
-          </ul>
-        </nav>
-
-        <nav className="footer-col" aria-label="Legal and policies">
-          <p className="footer-heading">Legal & Policies</p>
-          <ul className="footer-links">
-            <li>
-              <FooterLink href="/privacy" onNavigate={onNavigate}>Privacy Policy</FooterLink>
-            </li>
-            <li>
-              <FooterLink href="/terms" onNavigate={onNavigate}>Terms of Service</FooterLink>
-            </li>
-            <li>
-              <FooterLink href="/privacy#cookies" onNavigate={onNavigate}>Cookie Policy</FooterLink>
+              <button type="button" onClick={() => visit("/community")}>{t("footer.community")}</button>
             </li>
           </ul>
         </nav>
 
-        <nav className="footer-col" aria-label="Support">
-          <p className="footer-heading">Support & Search</p>
+        <nav className="footer-col" aria-label={t("footer.legalLabel")}>
+          <p className="footer-heading">{t("footer.legalHeading")}</p>
           <ul className="footer-links">
             <li>
-              <FooterLink href="/about" onNavigate={onNavigate}>About</FooterLink>
+              <FooterLink href="/privacy" onNavigate={onNavigate}>{t("footer.privacy")}</FooterLink>
             </li>
             <li>
-              <FooterLink href="/about#editorial" onNavigate={onNavigate}>Editorial Policy</FooterLink>
+              <FooterLink href="/terms" onNavigate={onNavigate}>{t("footer.terms")}</FooterLink>
             </li>
             <li>
-              <FooterLink href="/contact" onNavigate={onNavigate}>Contact</FooterLink>
+              <FooterLink href="/privacy#cookies" onNavigate={onNavigate}>{t("footer.cookie")}</FooterLink>
+            </li>
+          </ul>
+        </nav>
+
+        <nav className="footer-col" aria-label={t("footer.supportLabel")}>
+          <p className="footer-heading">{t("footer.supportHeading")}</p>
+          <ul className="footer-links">
+            <li>
+              <FooterLink href="/about" onNavigate={onNavigate}>{t("footer.about")}</FooterLink>
             </li>
             <li>
-              <FooterLink href="/sitemap.xml" external>Sitemap</FooterLink>
+              <FooterLink href="/about#editorial" onNavigate={onNavigate}>{t("footer.editorial")}</FooterLink>
+            </li>
+            <li>
+              <FooterLink href="/contact" onNavigate={onNavigate}>{t("footer.contact")}</FooterLink>
+            </li>
+            <li>
+              <FooterLink href="/sitemap.xml" external>{t("footer.sitemap")}</FooterLink>
             </li>
           </ul>
         </nav>
       </div>
 
       <div className="footer-bottom">
-        <nav aria-label="Required site links">
+        <nav aria-label={t("footer.requiredLinks")}>
           <ul className="footer-legal">
-            {LEGAL_LINKS.map((link) => (
+            {legalLinks.map((link) => (
               <li key={link.href}>
                 <FooterLink href={link.href} onNavigate={onNavigate} external={link.href === "/sitemap.xml"}>
                   {link.label}
@@ -131,7 +130,7 @@ export default function Footer({ onNavigate }) {
             ))}
           </ul>
         </nav>
-        <p className="footer-copy">Copyright ⓒ 2026 BlueLog Trip. All rights reserved.</p>
+        <p className="footer-copy">{t("footer.copyright")}</p>
       </div>
     </footer>
   );

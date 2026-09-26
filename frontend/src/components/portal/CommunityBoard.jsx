@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { PLATFORM_LABELS, PLATFORM_TABS, formatPostDate } from "../../lib/communityStore";
-import { uiCopy } from "../../lib/localeCopy";
+import { useTranslation } from "react-i18next";
+import { formatPostDate } from "../../lib/communityStore";
+import i18n, { appLanguage } from "../../i18n/i18n";
 
 const EMPTY_DRAFT = {
   author: "",
@@ -10,8 +11,23 @@ const EMPTY_DRAFT = {
   body: "",
 };
 
-export default function CommunityBoard({ posts, query, onCreate, language }) {
-  const copy = uiCopy(language);
+const TABS = ["all", "reddit", "quora", "pinterest", "tip"];
+
+function localizedPost(post, t) {
+  const titleKey = `community.seeds.${post.id}.title`;
+  if (!i18n.exists(titleKey)) return post;
+  return {
+    ...post,
+    title: t(titleKey),
+    metric: t(`community.seeds.${post.id}.metric`, { defaultValue: post.metric }),
+    body: t(`community.seeds.${post.id}.body`, { defaultValue: post.body }),
+    author: t("community.desk"),
+  };
+}
+
+export default function CommunityBoard({ posts, query, onCreate }) {
+  const { t } = useTranslation();
+  const language = appLanguage();
   const [tab, setTab] = useState("all");
   const [openId, setOpenId] = useState("");
   const [draft, setDraft] = useState(EMPTY_DRAFT);
@@ -29,9 +45,10 @@ export default function CommunityBoard({ posts, query, onCreate, language }) {
 
   const needle = query.trim().toLowerCase();
   const visible = posts.filter((post) => {
+    const shown = localizedPost(post, t);
     if (tab !== "all" && post.platform !== tab) return false;
     if (!needle) return true;
-    return `${post.title} ${post.body} ${post.author} ${post.metric}`.toLowerCase().includes(needle);
+    return `${shown.title} ${shown.body} ${shown.author} ${shown.metric}`.toLowerCase().includes(needle);
   });
 
   const updateDraft = (field) => (event) => {
@@ -41,11 +58,11 @@ export default function CommunityBoard({ posts, query, onCreate, language }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!draft.title.trim() || !draft.body.trim()) {
-      setFormError("Title and note are required.");
+      setFormError(t("community.required"));
       return;
     }
     const post = onCreate({
-      author: draft.author.trim() || "Traveler",
+      author: draft.author.trim() || t("community.traveler"),
       platform: draft.platform,
       title: draft.title.trim(),
       metric: draft.metric.trim(),
@@ -60,28 +77,26 @@ export default function CommunityBoard({ posts, query, onCreate, language }) {
   return (
     <section className="board">
       <header className="board-header">
-        <p className="hero-kicker">Community & Viral Log</p>
-        <h1>{copy.communityTitle}</h1>
-        <p className="board-lead">
-          Share a Reddit, Quora, or Pinterest result, or leave a tip for the next guide.
-        </p>
+        <p className="hero-kicker">{t("community.kicker")}</p>
+        <h1>{t("community.title")}</h1>
+        <p className="board-lead">{t("community.lead")}</p>
       </header>
 
-      <div className="board-tabs" role="tablist" aria-label="Viral log categories">
-        {PLATFORM_TABS.map((item) => {
-          const count = item.id === "all"
+      <div className="board-tabs" role="tablist" aria-label={t("community.tabsLabel")}>
+        {TABS.map((id) => {
+          const count = id === "all"
             ? posts.length
-            : posts.filter((post) => post.platform === item.id).length;
+            : posts.filter((post) => post.platform === id).length;
           return (
             <button
-              key={item.id}
+              key={id}
               type="button"
               role="tab"
-              aria-selected={tab === item.id}
-              className={tab === item.id ? "board-tab active" : "board-tab"}
-              onClick={() => setTab(item.id)}
+              aria-selected={tab === id}
+              className={tab === id ? "board-tab active" : "board-tab"}
+              onClick={() => setTab(id)}
             >
-              {item.label}
+              {t(`community.tabs.${id}`)}
               <span>{count}</span>
             </button>
           );
@@ -90,59 +105,60 @@ export default function CommunityBoard({ posts, query, onCreate, language }) {
 
       <div className="board-layout">
         <form className="composer" onSubmit={handleSubmit}>
-          <h2>Write a log</h2>
+          <h2>{t("community.write")}</h2>
           <label>
-            Name
+            {t("community.name")}
             <input
               value={draft.author}
               onChange={updateDraft("author")}
-              placeholder="Traveler"
+              placeholder={t("community.namePlaceholder")}
             />
           </label>
           <label>
-            Channel
+            {t("community.channel")}
             <select value={draft.platform} onChange={updateDraft("platform")}>
-              <option value="reddit">Reddit performance</option>
-              <option value="quora">Quora performance</option>
-              <option value="pinterest">Pinterest performance</option>
-              <option value="tip">Guide tip</option>
+              <option value="reddit">{t("community.channels.reddit")}</option>
+              <option value="quora">{t("community.channels.quora")}</option>
+              <option value="pinterest">{t("community.channels.pinterest")}</option>
+              <option value="tip">{t("community.channels.tip")}</option>
             </select>
           </label>
           <label>
-            Title
+            {t("community.titleField")}
             <input
               value={draft.title}
               onChange={updateDraft("title")}
-              placeholder="What worked"
+              placeholder={t("community.titlePlaceholder")}
             />
           </label>
           <label>
-            Result
+            {t("community.result")}
             <input
               value={draft.metric}
               onChange={updateDraft("metric")}
-              placeholder="1.2k upvotes, optional"
+              placeholder={t("community.resultPlaceholder")}
             />
           </label>
           <label>
-            Note
+            {t("community.note")}
             <textarea
               value={draft.body}
               onChange={updateDraft("body")}
               rows={5}
-              placeholder="What you posted, and what the guide should change next time."
+              placeholder={t("community.notePlaceholder")}
             />
           </label>
           {formError ? <p className="form-error">{formError}</p> : null}
-          <button type="submit" className="composer-submit">Post to the board</button>
+          <button type="submit" className="composer-submit">{t("community.submit")}</button>
         </form>
 
         <div className="post-column">
           {visible.length === 0 ? (
-            <p className="grid-empty">No logs on this tab yet.</p>
+            <p className="grid-empty">{t("community.empty")}</p>
           ) : (
             <ul className="post-list">
               {visible.map((post) => {
+                const shown = localizedPost(post, t);
                 const open = openId === post.id;
                 return (
                   <li key={post.id} id={`post-${post.id}`}>
@@ -154,16 +170,16 @@ export default function CommunityBoard({ posts, query, onCreate, language }) {
                         onClick={() => setOpenId(open ? "" : post.id)}
                       >
                         <span className={`platform-pill ${post.platform}`}>
-                          {PLATFORM_LABELS[post.platform] || post.platform}
+                          {t(`community.labels.${post.platform}`, { defaultValue: post.platform })}
                         </span>
-                        <h3>{post.title}</h3>
+                        <h3>{shown.title}</h3>
                         <small>
-                          {post.author}
-                          {post.metric ? ` · ${post.metric}` : ""}
-                          {` · ${formatPostDate(post.createdAt)}`}
+                          {shown.author}
+                          {shown.metric ? ` · ${shown.metric}` : ""}
+                          {` · ${formatPostDate(post.createdAt, language)}`}
                         </small>
                       </button>
-                      {open ? <p className="post-body">{post.body}</p> : null}
+                      {open ? <p className="post-body">{shown.body}</p> : null}
                     </article>
                   </li>
                 );

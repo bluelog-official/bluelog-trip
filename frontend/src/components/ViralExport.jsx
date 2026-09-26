@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Check, Copy } from "lucide-react";
-import { uiCopy } from "../lib/localeCopy";
+import { useTranslation } from "react-i18next";
 
 async function copyText(text) {
   try {
@@ -67,8 +67,8 @@ function blockText(parts) {
   return parts.filter(Boolean).join("\n\n");
 }
 
-export default function ViralExport({ syndication, language }) {
-  const copy = uiCopy(language);
+export default function ViralExport({ syndication }) {
+  const { t } = useTranslation();
   const data = syndication || {};
   const reddit = data.reddit || {};
   const quora = data.quora || {};
@@ -79,26 +79,26 @@ export default function ViralExport({ syndication, language }) {
 
   const cards = [
     {
-      title: "Reddit",
+      title: t("viral.reddit"),
       meta: reddit.subreddit ? `r/${reddit.subreddit}` : "",
       text: blockText([reddit.title, reddit.body]),
     },
     {
-      title: "Quora",
+      title: t("viral.quora"),
       meta: "",
       text: blockText([quora.question, quora.answer]),
     },
     {
-      title: "Pinterest",
+      title: t("viral.pinterest"),
       meta: pinterest.board || "",
       text: blockText([
         pinterest.pin_title,
         pinterest.description,
-        pinterest.image_alt ? `alt: ${pinterest.image_alt}` : "",
+        pinterest.image_alt ? `${t("viral.altPrefix")}: ${pinterest.image_alt}` : "",
       ]),
     },
     {
-      title: "Backlink",
+      title: t("viral.backlink"),
       meta: backlink.target_path || "",
       text: blockText([
         backlink.anchor_text,
@@ -107,12 +107,12 @@ export default function ViralExport({ syndication, language }) {
       ]),
     },
     {
-      title: "Social teasers",
+      title: t("viral.teasers"),
       meta: "",
       text: teasers.join("\n"),
     },
     {
-      title: "Hashtags",
+      title: t("viral.hashtags"),
       meta: "",
       text: hashtags.join(" "),
     },
@@ -120,7 +120,7 @@ export default function ViralExport({ syndication, language }) {
 
   if (cards.length === 0) {
     return (
-      <div className="viral-empty">{copy.viralEmptyDetail}</div>
+      <div className="viral-empty">{t("viral.empty")}</div>
     );
   }
 
@@ -130,8 +130,8 @@ export default function ViralExport({ syndication, language }) {
         <ExportCard
           key={card.title}
           {...card}
-          copyLabel={copy.copy}
-          copiedLabel={copy.copied}
+          copyLabel={t("viral.copy")}
+          copiedLabel={t("viral.copied")}
         />
       ))}
     </div>

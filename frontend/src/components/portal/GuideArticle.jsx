@@ -1,16 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { BadgeCheck } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import ArticleView from "../ArticleView";
 import AdSenseUnit from "../AdSenseUnit";
 import { prepareArticle, buildGuideJsonLd } from "../../lib/articleDocument";
-import { REGION_LABELS, toGuideCard } from "../../lib/guideCards";
+import { toGuideCard } from "../../lib/guideCards";
+import { appLanguage } from "../../i18n/i18n";
 import {
   containsHangul,
   englishField,
   formatPublishedDate,
   isEnglishLanguage,
   presentGuideCard,
-  uiCopy,
 } from "../../lib/localeCopy";
 
 function CrumbLink({ crumb, onNavigate }) {
@@ -43,8 +44,9 @@ function GuideHero({ src, alt }) {
   );
 }
 
-export default function GuideArticle({ guide, fileName, language, onNavigate }) {
-  const copy = uiCopy(language);
+export default function GuideArticle({ guide, fileName, onNavigate }) {
+  const { t } = useTranslation();
+  const language = appLanguage();
   const english = isEnglishLanguage(language);
   const card = presentGuideCard(toGuideCard(fileName || guide?.id || "", guide), language);
   const markdown = guide?.content || guide?.article_markdown || "";
@@ -54,9 +56,9 @@ export default function GuideArticle({ guide, fileName, language, onNavigate }) 
   );
   const publishedAt = guide?.published_at || "";
   const publishedLabel = formatPublishedDate(publishedAt, language);
-  const regionLabel = REGION_LABELS[card.region] || "";
+  const regionLabel = card.region ? t(`nav.${card.region}`) : "";
   const crumbs = [
-    { label: copy.home, path: "/" },
+    { label: t("nav.home"), path: "/" },
     ...(regionLabel ? [{ label: regionLabel, path: `/destinations/${card.region}` }] : []),
     { label: card.destination || card.title, path: "" },
   ];
@@ -70,8 +72,8 @@ export default function GuideArticle({ guide, fileName, language, onNavigate }) 
       label: english ? englishField(item.label, "") : item.label,
     }))
     .filter((item) => item.label);
-  if (!sources.some((item) => item.label === copy.author)) {
-    sources.push({ label: copy.author, href: "" });
+  if (!sources.some((item) => item.label === t("guide.author"))) {
+    sources.push({ label: t("guide.author"), href: "" });
   }
 
   const jsonLd = useMemo(
@@ -110,7 +112,7 @@ export default function GuideArticle({ guide, fileName, language, onNavigate }) 
 
   return (
     <article className="guide-article" data-page="guide-detail">
-      <nav className="breadcrumb" aria-label="Breadcrumb">
+      <nav className="breadcrumb" aria-label={t("guide.breadcrumb")}>
         {crumbs.map((crumb, index) => (
           <span key={`${crumb.label}-${index}`} className="crumb">
             {index > 0 ? <span className="crumb-sep" aria-hidden="true">&gt;</span> : null}
@@ -124,17 +126,17 @@ export default function GuideArticle({ guide, fileName, language, onNavigate }) 
         <div className="guide-meta">
           {publishedLabel ? (
             <time dateTime={publishedAt}>
-              {copy.published} {publishedLabel}
+              {t("guide.published")} {publishedLabel}
             </time>
           ) : null}
-          <span>{copy.author}</span>
+          <span>{t("guide.author")}</span>
           {card.approved ? (
             <span className="verified-pill">
               <BadgeCheck size={14} aria-hidden="true" />
-              {copy.verified}
+              {t("guide.verified")}
             </span>
           ) : (
-            <span className="checked-pill">{copy.checked}</span>
+            <span className="checked-pill">{t("guide.checked")}</span>
           )}
         </div>
       </header>
@@ -143,8 +145,8 @@ export default function GuideArticle({ guide, fileName, language, onNavigate }) 
 
       <div className="guide-sheet">
         {toc.length > 0 ? (
-          <nav className="guide-toc" aria-label={copy.toc}>
-            <h2>{copy.toc}</h2>
+          <nav className="guide-toc" aria-label={t("guide.toc")}>
+            <h2>{t("guide.toc")}</h2>
             <ol>
               {toc.map((item) => (
                 <li key={item.id} className={item.level === 3 ? "toc-h3" : "toc-h2"}>
@@ -178,7 +180,7 @@ export default function GuideArticle({ guide, fileName, language, onNavigate }) 
         ) : null}
 
         <div className="source-block">
-          <h2>{copy.sources}</h2>
+          <h2>{t("guide.sources")}</h2>
           <ul className="tag-row">
             {sources.map((item) => (
               <li key={`${item.label}-${item.href}`}>
