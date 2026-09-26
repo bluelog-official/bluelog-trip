@@ -33,7 +33,7 @@ from app.services.scheduler_service import (
 
 load_dotenv()
 
-DEFAULT_SITE_URL = "[https://bluelogtrip.com](https://bluelogtrip.com)"
+DEFAULT_SITE_URL = "https://bluelogtrip.com"
 SITE_URL = os.getenv("SITE_URL", DEFAULT_SITE_URL).strip().rstrip("/") or DEFAULT_SITE_URL
 VERCEL_ORIGIN_REGEX = r"https://[a-zA-Z0-9-]+\.vercel\.app"
 
@@ -51,7 +51,7 @@ def _origin(value: str) -> str:
 
 
 def _cors_allow_origins(site_url: str) -> List[str]:
-    """로컬 개발, SITE_URL, bluelog.travel 커스텀 도메인을 허용한다."""
+    """로컬 개발, SITE_URL, bluelogtrip.com 커스텀 도메인을 허용한다."""
     origins = [
         "http://localhost:5173",
         "http://127.0.0.1:5173",

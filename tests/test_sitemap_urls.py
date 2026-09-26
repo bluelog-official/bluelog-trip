@@ -16,12 +16,12 @@ def test_sitemap_uses_site_url_and_drops_scripts(monkeypatch, tmp_path):
     monkeypatch.setattr(scheduler_service, "GUIDES_DIR", guides)
     monkeypatch.setattr(scheduler_service, "OUTPUT_DIR", tmp_path / "output")
     monkeypatch.setattr(scheduler_service, "SITEMAP_PATH", tmp_path / "output" / "sitemap.xml")
-    monkeypatch.setenv("SITE_URL", "https://bluelog.travel")
+    monkeypatch.setenv("SITE_URL", "https://bluelogtrip.com")
     monkeypatch.setenv("VITE_SITE_URL", "")
 
     xml = scheduler_service.read_sitemap("http://127.0.0.1:8000")
 
-    assert "https://bluelog.travel/guide/rome_guide.md" in xml
+    assert "https://bluelogtrip.com/guide/rome_guide.md" in xml
     assert "127.0.0.1" not in xml
     assert "localhost" not in xml
     assert ":8000" not in xml
@@ -47,4 +47,4 @@ def test_localhost_origin_is_used_only_when_no_public_site_url(monkeypatch):
 
     assert scheduler_service.resolve_site_base_url("http://127.0.0.1:8000") == ""
     assert scheduler_service.resolve_site_base_url("http://localhost:5173") == "http://localhost:5173"
-    assert scheduler_service.resolve_site_base_url("https://bluelog.travel") == "https://bluelog.travel"
+    assert scheduler_service.resolve_site_base_url("https://bluelogtrip.com") == "https://bluelogtrip.com"

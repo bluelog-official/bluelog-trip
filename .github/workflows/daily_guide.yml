@@ -33,7 +33,7 @@ jobs:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
-          SITE_URL: https://bluelog.travel
+          SITE_URL: https://bluelogtrip.com
         run: python scripts/daily_guide_generator.py
 
       - name: Commit and push new guides
