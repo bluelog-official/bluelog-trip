@@ -18,3 +18,5 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+Sitemap: https://www.bluelogtrip.com/sitemap.xml
