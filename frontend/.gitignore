@@ -12,10 +12,9 @@ dist
 dist-ssr
 *.local
 
-# Local secrets
+# Local secrets. .env.production is tracked: it only sets the public API origin.
 .env
 .env.local
-.env.production
 
 # Editor directories and files
 .vscode/*

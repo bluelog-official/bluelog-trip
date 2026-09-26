@@ -1,6 +1,14 @@
 import { stripFrontmatter } from "./articleDocument";
 
-const API_BASE_URL = "http://127.0.0.1:8000/api/v1";
+const DEFAULT_API_ORIGIN = "https://bluelog-trip-backend.onrender.com";
+
+function resolveApiBaseUrl() {
+  const configured = String(import.meta.env.VITE_API_BASE_URL || DEFAULT_API_ORIGIN).replace(/\/$/, "");
+  if (configured.endsWith("/api/v1")) return configured;
+  return `${configured}/api/v1`;
+}
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 const REGION_CITIES = {
   asia: [
