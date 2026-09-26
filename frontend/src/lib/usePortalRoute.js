@@ -41,6 +41,9 @@ export function parseRoute(pathname) {
       guideId: "",
     };
   }
+  if (path === "/dashboard") {
+    return { name: "dashboard", category: "", guideId: "" };
+  }
   if (path === "/local-food") {
     return { name: "food", category: "food", guideId: "" };
   }

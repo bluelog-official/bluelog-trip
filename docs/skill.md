@@ -131,5 +131,6 @@ class GenerateResponse(BaseModel):
 | GET | `/api/v1/guides` | 생성된 가이드 목록 |
 | GET | `/api/v1/guides/{guide_id}` | 가이드 상세. 승인 전에는 `qa_result.is_approved`가 false |
 | POST | `/api/v1/guides/{guide_id}/approve` | 휴먼 리뷰 승인. `is_approved`를 true로 바꾸고 sitemap 갱신 후 Google ping |
+| GET | `/api/v1/admin/dashboard-stats` | Bearer 필수. 가이드 수, QA 75점 승인/보류, 배치 상태, 에이전트 헬스, 최근 10개 |
 
 `/guides`, `/guides/{guide_id}`는 프론트엔드 호환용 동일 라우트다.

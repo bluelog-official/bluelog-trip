@@ -19,8 +19,10 @@ export default function GlobalNav({
   onLanguageChange,
   onNavigate,
   onOpenAdmin,
+  onOpenDashboard,
   onLogout,
   adminMode = false,
+  dashboardActive = false,
 }) {
   const [destOpen, setDestOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -146,6 +148,13 @@ export default function GlobalNav({
           </select>
           {adminMode ? (
             <>
+              <button
+                type="button"
+                className={dashboardActive ? "dashboard-btn active" : "dashboard-btn"}
+                onClick={onOpenDashboard}
+              >
+                Dashboard
+              </button>
               <button type="button" className="admin-btn" onClick={onOpenAdmin}>
                 Admin / Generator
               </button>

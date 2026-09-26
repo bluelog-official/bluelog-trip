@@ -13,8 +13,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 
 from app.schemas.auth_schema import AdminLoginRequest, AdminLoginResponse
+from app.schemas.dashboard_schema import DashboardStats
 from app.schemas.guide_schema import GenerateRequest, GenerateResponse
 from app.services.auth_service import admin_password, authenticate_admin, authorization_is_valid
+from app.services.dashboard_service import build_dashboard_stats
 from app.services.guide_service import get_guide, list_guides
 from app.services.scheduler_service import (
     generate_city_guide,
@@ -119,6 +121,15 @@ async def admin_login(body: AdminLoginRequest) -> AdminLoginResponse:
     if not password_ok or not token:
         raise HTTPException(status_code=401, detail="잘못된 관리자 정보입니다")
     return AdminLoginResponse(access_token=token)
+
+
+@app.get(
+    "/api/v1/admin/dashboard-stats",
+    response_model=DashboardStats,
+    dependencies=[Depends(require_admin)],
+)
+async def get_dashboard_stats() -> DashboardStats:
+    return DashboardStats.model_validate(build_dashboard_stats())
 
 
 @app.post(

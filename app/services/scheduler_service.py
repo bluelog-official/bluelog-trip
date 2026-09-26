@@ -23,6 +23,7 @@ from app.services.guide_service import (
     _MIN_APPROVED_SCORE,
     build_generate_response,
     build_guide_id,
+    format_seoul_stamp,
     inject_guide_images,
     load_approved_ids,
     mark_guide_approved,
@@ -60,6 +61,9 @@ JOB_ID = "daily_guide_generation"
 _scheduler = AsyncIOScheduler(timezone="Asia/Seoul")
 _run_lock = asyncio.Lock()
 _last_run: Optional[Dict[str, Any]] = None
+_batch_running = False
+_batch_city = ""
+_BATCH_STATUSES = ("SUCCESS", "RUNNING", "FAILED")
 
 
 def _read_state() -> Dict[str, Any]:
@@ -294,54 +298,79 @@ async def publish_approved_guide(guide_id: str) -> Dict[str, Any]:
 
 async def run_daily_auto_generation() -> Dict[str, Any]:
     """아직 없는 도시 가이드를 만들고, QA 75점 이상이면 승인 후 sitemap을 갱신한다."""
-    global _last_run
+    global _last_run, _batch_running, _batch_city
     async with _run_lock:
         destination = select_pending_city()
-        if destination is None:
-            _last_run = {
-                "status": "skipped",
-                "published": False,
-                "destination": None,
-                "reason": "모든 대상 도시의 가이드가 이미 있습니다.",
-                "finished_at": datetime.now(timezone.utc).isoformat(),
-            }
-            print("🗓️ [Scheduler] 생성할 신규 도시가 없습니다.")
-            return dict(_last_run)
+        city = destination or peek_next_city()
+        previous = _read_batch_file()
+        _batch_running = True
+        _batch_city = city
+        _write_batch_status(
+            "RUNNING",
+            city,
+            str(previous.get("last_run") or "") or format_seoul_stamp(),
+        )
+        try:
+            result = await _execute_daily_auto_generation(destination)
+        except Exception:
+            _write_batch_status("FAILED", city, format_seoul_stamp())
+            raise
+        else:
+            finished_city = str(result.get("destination") or city)
+            _write_batch_status("SUCCESS", finished_city, format_seoul_stamp())
+            return result
+        finally:
+            _batch_running = False
+            _batch_city = ""
 
-        print("🗓️ [Scheduler] {0} 자동 생성 시작".format(destination))
-        response = await generate_city_guide(destination)
-        guide_id = build_guide_id(destination)
-        save_guide(guide_id, response)
-        file_path = save_guide_file(guide_id, response)
-        qa_result = response.qa_result.model_dump()
-        seo_ping = None
-        published = False
-        if response.qa_result.quality_score >= _MIN_APPROVED_SCORE:
-            published_payload = await publish_approved_guide(guide_id)
-            published = True
-            qa_result = published_payload["qa_result"]
-            seo_ping = published_payload.get("seo_ping")
-            file_path = Path(published_payload.get("file_path") or file_path)
-        _advance_past(destination)
+
+async def _execute_daily_auto_generation(destination: Optional[str]) -> Dict[str, Any]:
+    global _last_run
+    if destination is None:
         _last_run = {
-            "status": "ok",
-            "published": published,
-            "destination": destination,
-            "guide_id": guide_id,
-            "file_path": str(file_path),
-            "qa_result": qa_result,
-            "syndication": response.syndication.model_dump(),
-            "research_model": response.research_model,
-            "writer_model": response.writer_model,
+            "status": "skipped",
+            "published": False,
+            "destination": None,
+            "reason": "모든 대상 도시의 가이드가 이미 있습니다.",
             "finished_at": datetime.now(timezone.utc).isoformat(),
         }
-        if seo_ping is not None:
-            _last_run["seo_ping"] = seo_ping
-        if published:
-            print("🗓️ [Scheduler] {0} 자동 승인 및 sitemap 갱신: {1}".format(destination, file_path))
-        else:
-            print("🗓️ [Scheduler] {0} QA 미달로 검수 대기 저장: {1}".format(destination, file_path))
+        print("🗓️ [Scheduler] 생성할 신규 도시가 없습니다.")
         return dict(_last_run)
+
+    print("🗓️ [Scheduler] {0} 자동 생성 시작".format(destination))
+    response = await generate_city_guide(destination)
+    guide_id = build_guide_id(destination)
+    save_guide(guide_id, response)
+    file_path = save_guide_file(guide_id, response)
+    qa_result = response.qa_result.model_dump()
+    seo_ping = None
+    published = False
+    if response.qa_result.quality_score >= _MIN_APPROVED_SCORE:
+        published_payload = await publish_approved_guide(guide_id)
+        published = True
+        qa_result = published_payload["qa_result"]
+        seo_ping = published_payload.get("seo_ping")
+        file_path = Path(published_payload.get("file_path") or file_path)
+    _advance_past(destination)
+    _last_run = {
+        "status": "ok",
+        "published": published,
+        "destination": destination,
+        "guide_id": guide_id,
+        "file_path": str(file_path),
+        "qa_result": qa_result,
+        "syndication": response.syndication.model_dump(),
+        "research_model": response.research_model,
+        "writer_model": response.writer_model,
+        "finished_at": datetime.now(timezone.utc).isoformat(),
+    }
+    if seo_ping is not None:
+        _last_run["seo_ping"] = seo_ping
+    if published:
+        print("🗓️ [Scheduler] {0} 자동 승인 및 sitemap 갱신: {1}".format(destination, file_path))
+    else:
+        print("🗓️ [Scheduler] {0} QA 미달로 검수 대기 저장: {1}".format(destination, file_path))
+    return dict(_last_run)
 
 
 def start_scheduler() -> None:
@@ -360,6 +389,63 @@ def start_scheduler() -> None:
 def shutdown_scheduler() -> None:
     if _scheduler.running:
         _scheduler.shutdown(wait=False)
+
+
+def batch_status_path() -> Path:
+    return OUTPUT_DIR / "batch_status.json"
+
+
+def _read_batch_file() -> Dict[str, Any]:
+    path = batch_status_path()
+    if not path.is_file():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    if not isinstance(payload, dict):
+        return {}
+    return payload
+
+
+def _write_batch_status(status: str, target_city: str, last_run: str) -> None:
+    path = batch_status_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(
+            {
+                "last_run": last_run,
+                "status": status,
+                "target_city": target_city,
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+
+def read_daily_batch_status() -> Dict[str, str]:
+    """대시보드용 배치 상태. 프로세스가 죽은 RUNNING 기록은 FAILED로 본다."""
+    global _batch_running, _batch_city
+    stored = _read_batch_file()
+    target = str(stored.get("target_city") or "").strip() or peek_next_city()
+    last_run = str(stored.get("last_run") or "")
+    if _batch_running:
+        return {
+            "last_run": last_run or format_seoul_stamp(),
+            "status": "RUNNING",
+            "target_city": _batch_city or target,
+        }
+    status = str(stored.get("status") or "SUCCESS")
+    if status == "RUNNING":
+        status = "FAILED"
+    if status not in _BATCH_STATUSES:
+        status = "SUCCESS"
+    return {
+        "last_run": last_run,
+        "status": status,
+        "target_city": target,
+    }
 
 
 def scheduler_status() -> Dict[str, Any]:

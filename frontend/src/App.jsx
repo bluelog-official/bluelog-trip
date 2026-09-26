@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Footer from "./components/Footer";
+import Dashboard from "./pages/Dashboard";
 import AdSenseUnit from "./components/AdSenseUnit";
 import AdminDrawer from "./components/portal/AdminDrawer";
 import AdminLogin from "./components/portal/AdminLogin";
@@ -18,7 +19,9 @@ import {
 import {
   adminAuthHeaders,
   clearAdminToken,
+  consumeAdminReturn,
   readAdminToken,
+  rememberAdminReturn,
   storeAdminToken,
 } from "./lib/adminSession";
 import { loadCommunityPosts, saveCommunityPosts } from "./lib/communityStore";
@@ -108,8 +111,17 @@ export default function App() {
   }, [adminMode]);
 
   useEffect(() => {
-    if (adminSession && adminGate) leaveAdminGate("replace");
-  }, [adminSession, adminGate, leaveAdminGate]);
+    if (route.name !== "dashboard" || adminSession) return;
+    rememberAdminReturn("/dashboard");
+    go("/admin");
+  }, [route.name, adminSession, go]);
+
+  useEffect(() => {
+    if (!(adminSession && adminGate)) return;
+    const next = consumeAdminReturn();
+    leaveAdminGate("replace");
+    if (next === "/dashboard") go("/dashboard");
+  }, [adminSession, adminGate, leaveAdminGate, go]);
 
   const endAdminSession = () => {
     clearAdminToken();
@@ -120,6 +132,10 @@ export default function App() {
   const handleLogout = () => {
     endAdminSession();
     setLoginOpen(false);
+    if (route.name === "dashboard") {
+      go("/");
+      return;
+    }
     if (adminGate) leaveAdminGate("replace");
   };
 
@@ -131,6 +147,7 @@ export default function App() {
 
   const handleCloseLogin = () => {
     setLoginOpen(false);
+    consumeAdminReturn();
     if (adminGate) leaveAdminGate("push");
   };
 
@@ -155,6 +172,7 @@ export default function App() {
       destinations: "Destinations · BlueLog Trip",
       food: "Local Food · BlueLog Trip",
       community: "Community & Viral Log · BlueLog Trip",
+      dashboard: "Dashboard · BlueLog Trip",
     };
     document.title = titles[route.name] || "BlueLog Trip - Curated Local City Guides";
     setMetaDescription(copy.siteDescription);
@@ -285,8 +303,10 @@ export default function App() {
         onLanguageChange={setLanguage}
         onNavigate={go}
         onOpenAdmin={() => setAdminOpen(true)}
+        onOpenDashboard={() => go("/dashboard")}
         onLogout={handleLogout}
         adminMode={adminMode}
+        dashboardActive={route.name === "dashboard"}
       />
 
       {route.name === "home" ? (
@@ -299,7 +319,13 @@ export default function App() {
       ) : null}
 
       <main className="portal-main">
-        {route.name === "community" ? (
+        {route.name === "dashboard" ? (
+          adminSession ? (
+            <Dashboard onUnauthorized={handleUnauthorized} />
+          ) : (
+            <p className="dash-note">관리자 로그인으로 이동합니다.</p>
+          )
+        ) : route.name === "community" ? (
           <CommunityBoard
             posts={posts}
             query={query}

@@ -1,0 +1,47 @@
+"""관리자 대시보드 집계. LLM을 호출하지 않는다."""
+
+from typing import Any, Dict
+
+from app.services.guide_service import _MIN_APPROVED_SCORE, list_guide_records
+from app.services.scheduler_service import read_daily_batch_status
+
+_AGENT_MODULES = (
+    ("research_agent", "app.agents.research_agent"),
+    ("writer_agent", "app.agents.writer_agent"),
+    ("qa_agent", "app.services.guide_service"),
+    ("syndication_agent", "app.agents.syndication_agent"),
+)
+
+
+def agent_health() -> Dict[str, str]:
+    """파이프라인 모듈을 불러올 수 있으면 OK, 아니면 ERROR."""
+    health: Dict[str, str] = {}
+    for name, module_name in _AGENT_MODULES:
+        try:
+            __import__(module_name)
+        except Exception:  # noqa: BLE001 - 헬스체크는 원인과 무관하게 실패만 표시한다
+            health[name] = "ERROR"
+        else:
+            health[name] = "OK"
+    return health
+
+
+def build_dashboard_stats() -> Dict[str, Any]:
+    """QA 75점 자동 발행과 75점 미만 검수 대기를 집계한다."""
+    guides = list_guide_records()
+    approved_count = 0
+    pending_count = 0
+    for guide in guides:
+        score = int(guide.get("qa_score") or 0)
+        if score >= _MIN_APPROVED_SCORE and guide.get("is_approved"):
+            approved_count += 1
+        elif score < _MIN_APPROVED_SCORE and not guide.get("is_approved"):
+            pending_count += 1
+    return {
+        "total_guides_count": len(guides),
+        "approved_count": approved_count,
+        "pending_count": pending_count,
+        "daily_batch_status": read_daily_batch_status(),
+        "agent_health": agent_health(),
+        "recent_guides": guides[:10],
+    }

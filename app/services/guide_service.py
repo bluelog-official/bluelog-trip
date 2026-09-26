@@ -4,6 +4,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from app.agents.syndication_agent import run_syndication_agent
 from app.schemas.guide_schema import (
@@ -20,6 +21,33 @@ _OUTPUT_DIR = _ROOT_DIR / "output"
 _GUIDES_DIR = _ROOT_DIR / "guides"
 
 _MIN_APPROVED_SCORE = 75
+
+
+def _seoul_timezone():
+    try:
+        return ZoneInfo("Asia/Seoul")
+    except ZoneInfoNotFoundError:
+        return timezone.utc
+
+
+_SEOUL_TZ = _seoul_timezone()
+
+
+def format_seoul_stamp(moment: Optional[datetime] = None) -> str:
+    """대시보드에 보여줄 분 단위 시각. Asia/Seoul 기준 YYYY-MM-DD HH:MM."""
+    current = moment or datetime.now(timezone.utc)
+    if current.tzinfo is None:
+        current = current.replace(tzinfo=timezone.utc)
+    return current.astimezone(_SEOUL_TZ).strftime("%Y-%m-%d %H:%M")
+
+
+def city_label(guide_id: str) -> str:
+    stem = guide_id
+    suffix = "_guide.md"
+    if stem.endswith(suffix):
+        stem = stem[: -len(suffix)]
+    label = stem.replace("_", " ").strip().title()
+    return label or guide_id
 
 
 def build_guide_id(destination: str) -> str:
@@ -250,6 +278,52 @@ def _payload_from_file(guide_id: str) -> Optional[Dict[str, Any]]:
         writer_model="file",
         guide_id=guide_id,
     ).model_dump()
+
+
+def _guide_record(
+    guide_id: str,
+    qa_score: int,
+    is_approved: bool,
+    path: Optional[Path] = None,
+) -> Dict[str, Any]:
+    source = path if path is not None else _guide_file_path(guide_id)
+    if source is not None:
+        moment = datetime.fromtimestamp(source.stat().st_mtime, tz=timezone.utc)
+    else:
+        moment = datetime.now(timezone.utc)
+    return {
+        "filename": guide_id,
+        "city": city_label(guide_id),
+        "qa_score": int(qa_score),
+        "created_at": format_seoul_stamp(moment),
+        "is_approved": bool(is_approved),
+    }
+
+
+def list_guide_records() -> List[Dict[str, Any]]:
+    """전체 가이드의 파일명, 도시, QA 점수, 생성 시각, 승인 여부. 최신순."""
+    approved = set(load_approved_ids())
+    records: List[Dict[str, Any]] = []
+    seen = set()
+    for guide_id, payload in _GUIDE_STORE.items():
+        seen.add(guide_id)
+        qa = payload.get("qa_result") or {}
+        try:
+            score = int(qa.get("quality_score") or 0)
+        except (TypeError, ValueError):
+            score = 0
+        records.append(_guide_record(guide_id, score, guide_id in approved))
+    for path in _iter_guide_files():
+        if path.name in seen:
+            continue
+        try:
+            article = path.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        score = evaluate_article(article).quality_score
+        records.append(_guide_record(path.name, score, path.name in approved, path))
+    records.sort(key=lambda item: (item["created_at"], item["filename"]), reverse=True)
+    return records
 
 
 def list_guides() -> List[Dict[str, Any]]:
